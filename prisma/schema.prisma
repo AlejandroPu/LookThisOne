@@ -1,0 +1,131 @@
+// Prisma schema — LookThisOne
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ---------- Modelo base multi-tenant ----------
+// users → workspaces → pages → links
+// Los IDs de users coinciden con auth.users.id de Supabase (UUID)
+
+model User {
+  id        String   @id @db.Uuid
+  email     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  workspaces WorkspaceMember[]
+
+  @@map("users")
+}
+
+model Workspace {
+  id        String   @id @default(uuid()) @db.Uuid
+  slug      String   @unique
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  members WorkspaceMember[]
+  pages   Page[]
+
+  @@map("workspaces")
+}
+
+model WorkspaceMember {
+  workspaceId String @map("workspace_id") @db.Uuid
+  userId      String @map("user_id") @db.Uuid
+  role        Role   @default(OWNER)
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([workspaceId, userId])
+  @@map("workspace_members")
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+model Page {
+  id          String   @id @default(uuid()) @db.Uuid
+  workspaceId String   @map("workspace_id") @db.Uuid
+  username    String   @unique
+  title       String?
+  bio         String?
+  avatarUrl   String?  @map("avatar_url")
+  themeId     String?  @map("theme_id") @db.Uuid
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  theme     Theme?    @relation(fields: [themeId], references: [id], onDelete: SetNull)
+  links     Link[]
+  events    AnalyticsEvent[]
+
+  @@index([workspaceId])
+  @@map("pages")
+}
+
+model Link {
+  id        String   @id @default(uuid()) @db.Uuid
+  pageId    String   @map("page_id") @db.Uuid
+  title     String
+  url       String
+  position  Int      @default(0)
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  page   Page             @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  events AnalyticsEvent[]
+
+  @@index([pageId, position])
+  @@map("links")
+}
+
+model Theme {
+  id         String   @id @default(uuid()) @db.Uuid
+  name       String
+  isBuiltIn  Boolean  @default(false) @map("is_built_in")
+  background String?
+  foreground String?
+  accent     String?
+  font       String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  pages Page[]
+
+  @@map("themes")
+}
+
+// Tabla analítica separada — candidata a migrar a Tinybird/ClickHouse a escala
+model AnalyticsEvent {
+  id        BigInt   @id @default(autoincrement())
+  pageId    String   @map("page_id") @db.Uuid
+  linkId    String?  @map("link_id") @db.Uuid
+  type      String   // "view" | "click"
+  country   String?
+  referrer  String?
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  page Page  @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  link Link? @relation(fields: [linkId], references: [id], onDelete: SetNull)
+
+  @@index([pageId, createdAt])
+  @@index([linkId, createdAt])
+  @@map("analytics_events")
+}
