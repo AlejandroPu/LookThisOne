@@ -96,6 +96,23 @@ gh pr create --title "..." --body "..."    # abrir PR
 # → el merge lo hace el owner desde la UI de GitHub (ver abajo)
 ```
 
+### Automated pre-merge review
+
+Before asking the owner to merge, invoke the **`pr-reviewer`** subagent
+(defined in `.claude/agents/pr-reviewer.md`). It reads the PR diff with
+fresh eyes and returns a short verdict (`PASS` / `CHANGES REQUESTED` /
+`BLOCK`) against a quality checklist that goes beyond what CI covers:
+competitor brand names in copy, leftover `TODO`s, boilerplate residue,
+accessibility, scope creep, missing migrations, etc.
+
+Rules:
+
+- Only invoke it **after CI is green**. If CI is red, fix that first.
+- Skip it for trivial docs-only typo PRs.
+- If the verdict is `BLOCK` or `CHANGES REQUESTED`, apply the fixes as new
+  commits on the same branch and re-invoke.
+- Only once the verdict is `PASS`, tell the owner the PR is ready to merge.
+
 ### Quién mergea (separación de roles)
 
 El merge a `main` es un **acto de ownership**: marca la entrada de código a
