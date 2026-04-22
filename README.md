@@ -1,36 +1,172 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LookThisOne
 
-## Getting Started
+A professional link-in-bio SaaS — one page, all your links, with analytics and multi-workspace collaboration built in.
 
-First, run the development server:
+[![CI](https://github.com/AlejandroPu/LookThisOne/actions/workflows/ci.yml/badge.svg)](https://github.com/AlejandroPu/LookThisOne/actions/workflows/ci.yml)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Prisma](https://img.shields.io/badge/Prisma-7-2D3748?logo=prisma)](https://www.prisma.io)
+[![Supabase](https://img.shields.io/badge/Supabase-Postgres-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38BDF8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Deploy on Vercel](https://img.shields.io/badge/Vercel-deploy-black?logo=vercel)](https://vercel.com)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+**Live:** [lookthis.one](https://lookthis.one) &nbsp;·&nbsp; **Repo:** [github.com/AlejandroPu/LookThisOne](https://github.com/AlejandroPu/LookThisOne)
+
+> The landing and UI currently ship with placeholder copy and minimal styling. Product polish is intentionally deferred until after the core flows (auth, dashboard, editor) land.
+
+---
+
+## Features
+
+- **Public profile pages** at `/[username]`, served with Next.js ISR and on-demand revalidation so creator edits appear instantly while the CDN absorbs visitor traffic.
+- **Multi-tenant from day one** — `users → workspaces → pages → links` — ready for team/agency plans without a painful migration later.
+- **Row-Level Security** enabled on every table. Server uses Prisma (bypasses RLS); browser uses Supabase client (respects RLS).
+- **First-party analytics** table, designed to migrate to a purpose-built store (Tinybird / ClickHouse) when volume justifies it.
+- **Professional workflow**: protected `main`, PR-only merges, required CI, Conventional Commits, squash history.
+
+---
+
+## Architecture
+
+```
+Visitor → Vercel CDN → Next.js App Router
+                         ├── /[username]       (ISR, revalidate 60s)
+                         ├── /dashboard        (private SPA, auth)
+                         └── API Routes
+                               ↓
+                       Supabase (Postgres + Auth + Storage)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Data model
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+users ─┬─ workspace_members ─ workspaces ─┬─ pages ─┬─ links
+       │                                  │         └─ analytics_events
+       └─ auth.users (Supabase)           └─ themes
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `users.id` mirrors `auth.users.id` from Supabase Auth (UUID).
+- Every table has RLS policies; anonymous visitors can read published pages, their enabled links, and themes, and can insert analytics events. Everything else is denied until authenticated flows land.
 
-## Learn More
+### Stack
 
-To learn more about Next.js, take a look at the following resources:
+| Layer     | Choice                                    |
+| --------- | ----------------------------------------- |
+| Framework | Next.js 16 (App Router, Turbopack build)  |
+| Language  | TypeScript                                |
+| Styling   | Tailwind CSS v4                           |
+| Database  | PostgreSQL (Supabase)                     |
+| ORM       | Prisma 7 with `@prisma/adapter-pg` driver |
+| Auth      | Supabase Auth via `@supabase/ssr`         |
+| Storage   | Supabase Storage                          |
+| Hosting   | Vercel (auto-deploy from `main`)          |
+| CI        | GitHub Actions (lint, typecheck, build)   |
+| Tooling   | ESLint, Prettier, Husky, lint-staged      |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Local development
 
-## Deploy on Vercel
+### Prerequisites
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Node.js 22+
+- npm 10+
+- A Supabase project (free tier is enough)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Setup
+
+```bash
+git clone https://github.com/AlejandroPu/LookThisOne.git
+cd LookThisOne
+npm install
+cp .env.example .env.local
+# Fill in .env.local with your Supabase values
+npm run prisma:migrate      # apply schema + RLS policies
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+### Environment variables
+
+See [`.env.example`](./.env.example). At minimum:
+
+| Variable                               | Purpose                                      |
+| -------------------------------------- | -------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`             | Supabase project URL (public)                |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key (public)            |
+| `DATABASE_URL`                         | Pooled Postgres connection (runtime queries) |
+| `DIRECT_URL`                           | Direct Postgres connection (migrations)      |
+
+---
+
+## Scripts
+
+| Command                   | What it does                                      |
+| ------------------------- | ------------------------------------------------- |
+| `npm run dev`             | Next.js dev server                                |
+| `npm run build`           | Generate Prisma client + production build         |
+| `npm run start`           | Run the production build locally                  |
+| `npm run lint`            | ESLint                                            |
+| `npm run format`          | Prettier `--write` over the repo                  |
+| `npm run format:check`    | Prettier `--check` (the one CI runs)              |
+| `npm run typecheck`       | `tsc --noEmit`                                    |
+| `npm run prisma:migrate`  | Create/apply a migration in dev                   |
+| `npm run prisma:deploy`   | Apply migrations in prod (intended for CI/Vercel) |
+| `npm run prisma:studio`   | Prisma Studio                                     |
+| `npm run prisma:generate` | Regenerate Prisma Client                          |
+
+---
+
+## Project structure
+
+```
+src/
+  app/
+    layout.tsx               # Root layout, metadata, fonts
+    page.tsx                 # Landing
+    [username]/page.tsx      # Public profile (ISR)
+    globals.css              # Tailwind entry + design tokens
+  lib/
+    prisma.ts                # Prisma singleton (pg adapter)
+    supabase/
+      client.ts              # Browser Supabase client
+      server.ts              # Server Supabase client (cookies)
+prisma/
+  schema.prisma              # Multi-tenant data model
+  migrations/                # Versioned SQL, including RLS policies
+.github/workflows/ci.yml     # Lint, typecheck, build
+```
+
+---
+
+## Workflow
+
+- `main` is protected: no direct pushes, no force-pushes, linear history, required CI check.
+- Every change lands via a Pull Request, squash-merged so the log reads as one commit per feature.
+- Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`, `test:`, `refactor:`, `perf:`, `style:`, `ci:`).
+- Pre-commit hook runs ESLint `--fix` and Prettier over staged files via `husky` + `lint-staged`.
+
+See [`CLAUDE.md`](./CLAUDE.md) for the full contributor guide (also read by AI agents working on this repo).
+
+---
+
+## Roadmap
+
+- [x] Multi-tenant schema with RLS
+- [x] Public `/[username]` page with ISR
+- [x] Protected `main`, CI, professional tooling
+- [ ] Supabase Auth flows (sign-in, sign-up, session)
+- [ ] Dashboard: create/edit pages and links
+- [ ] Theme editor
+- [ ] Visual redesign (planned with Claude Design)
+- [ ] Analytics dashboard
+- [ ] Custom subdomains on paid plans
+
+---
+
+## License
+
+Source-available for learning and review. Not licensed for production use, redistribution, or commercial derivatives.
+
+© Alejandro Pu. All rights reserved.
