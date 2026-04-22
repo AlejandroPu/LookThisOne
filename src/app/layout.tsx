@@ -14,23 +14,23 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: 'LookThisOne — Tu link en bio, con tu identidad',
+    default: 'LookThisOne — Your link in bio, your identity',
     template: '%s · LookThisOne',
   },
-  description: 'Herramienta de link en bio.',
+  description: 'A link-in-bio tool built around your identity.',
   metadataBase: new URL('https://lookthis.one'),
   openGraph: {
-    title: 'LookThisOne — Tu link en bio, con tu identidad',
-    description: 'Herramienta de link en bio.',
+    title: 'LookThisOne — Your link in bio, your identity',
+    description: 'A link-in-bio tool built around your identity.',
     url: 'https://lookthis.one',
     siteName: 'LookThisOne',
-    locale: 'es_ES',
+    locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'LookThisOne — Tu link en bio, con tu identidad',
-    description: 'Herramienta de link en bio.',
+    title: 'LookThisOne — Your link in bio, your identity',
+    description: 'A link-in-bio tool built around your identity.',
   },
 };
 
