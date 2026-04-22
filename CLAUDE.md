@@ -93,8 +93,25 @@ git checkout -b <tipo>/<nombre-kebab>      # crear feature branch
 git push -u origin <rama>                  # publicar rama
 gh pr create --title "..." --body "..."    # abrir PR
 # Esperar CI verde, revisar diff en GitHub
-gh pr merge --squash --delete-branch       # squash merge para historial limpio
+# → el merge lo hace el owner desde la UI de GitHub (ver abajo)
 ```
+
+### Quién mergea (separación de roles)
+
+El merge a `main` es un **acto de ownership**: marca la entrada de código a
+producción y dispara el deploy automático a Vercel. Por eso:
+
+- **Los agentes de IA (Claude Code, etc.) NO ejecutan `gh pr merge`.**
+  Su trabajo termina al abrir el PR y confirmar que CI está verde.
+- **El owner del repo** revisa el diff en GitHub y hace el squash-merge +
+  delete branch desde la UI (o con `gh pr merge --squash --delete-branch`
+  ejecutado manualmente).
+- Tras el merge, el agente (o el dev) sincroniza: `git checkout main &&
+git pull`, borra la rama local, y continúa con el siguiente trabajo.
+
+Esto preserva el _four-eyes principle_ aunque el repo sea de un solo
+desarrollador, y evita que acciones irreversibles sobre `main` se ejecuten
+sin revisión humana final.
 
 ### Convenciones de ramas
 
