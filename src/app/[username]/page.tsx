@@ -51,20 +51,20 @@ export default async function ProfilePage({ params }: { params: Params }) {
 
   return (
     <main
-      className="min-h-screen flex flex-col items-center py-16 px-4"
+      className="flex min-h-screen flex-col items-center px-4 py-16"
       style={{ backgroundColor: bg, color: fg }}
     >
-      <div className="w-full max-w-md flex flex-col items-center">
+      <div className="flex w-full max-w-md flex-col items-center">
         {page.avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={page.avatarUrl}
             alt={page.title ?? page.username}
-            className="w-24 h-24 rounded-full object-cover mb-4"
+            className="mb-4 h-24 w-24 rounded-full object-cover"
           />
         ) : (
           <div
-            className="w-24 h-24 rounded-full mb-4 flex items-center justify-center text-3xl font-semibold"
+            className="mb-4 flex h-24 w-24 items-center justify-center rounded-full text-3xl font-semibold"
             style={{ backgroundColor: accent }}
           >
             {page.username.charAt(0).toUpperCase()}

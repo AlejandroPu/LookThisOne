@@ -10,15 +10,15 @@ El dominio final será **LookThis.One** (actualmente apuntando a Hostinger con u
 
 ## Stack tecnológico decidido
 
-| Capa | Tecnología | Motivo |
-|------|-----------|--------|
-| Framework | Next.js 15 (App Router) | SSR/ISR para perfiles públicos, API Routes para backend |
-| Hosting | Vercel (Hobby, gratuito) | Deploy automático desde GitHub, CDN global |
-| Base de datos | PostgreSQL vía Supabase | Gratuito, incluye auth y storage |
-| ORM | Prisma | Type-safety, migraciones versionadas |
-| Autenticación | Supabase Auth | Incluido en Supabase, evita dependencia extra |
-| Storage | Supabase Storage | Avatares y banners, incluido en plan gratuito |
-| Lenguaje | TypeScript | Type-safety en todo el proyecto |
+| Capa          | Tecnología               | Motivo                                                  |
+| ------------- | ------------------------ | ------------------------------------------------------- |
+| Framework     | Next.js 15 (App Router)  | SSR/ISR para perfiles públicos, API Routes para backend |
+| Hosting       | Vercel (Hobby, gratuito) | Deploy automático desde GitHub, CDN global              |
+| Base de datos | PostgreSQL vía Supabase  | Gratuito, incluye auth y storage                        |
+| ORM           | Prisma                   | Type-safety, migraciones versionadas                    |
+| Autenticación | Supabase Auth            | Incluido en Supabase, evita dependencia extra           |
+| Storage       | Supabase Storage         | Avatares y banners, incluido en plan gratuito           |
+| Lenguaje      | TypeScript               | Type-safety en todo el proyecto                         |
 
 ---
 
@@ -31,16 +31,19 @@ usuarios → Next.js (Vercel CDN) → API Routes → PostgreSQL (Supabase)
 ```
 
 ### Perfil público (`/[username]`)
+
 - Renderizado con **ISR (Incremental Static Regeneration)**
 - `revalidate: 60` — se regenera máximo una vez por minuto
 - El 99% del tráfico se sirve desde el CDN sin tocar la base de datos
 - Soporta millones de visitas sin degradar el sistema
 
 ### Dashboard (`/dashboard`)
+
 - SPA privada protegida por autenticación
 - El creador gestiona sus links, temas y perfil
 
 ### Modelo de datos base
+
 ```
 users → workspaces → pages → links
                            → themes
@@ -52,11 +55,13 @@ users → workspaces → pages → links
 ## Infraestructura actual (ya configurada)
 
 ### GitHub
+
 - Repositorio: `https://github.com/AlejandroPu/LookThisOne`
 - Rama principal: `main`
 - Estado: tiene solo un `README.md` — el proyecto Next.js aún no existe
 
 ### Vercel
+
 - Proyecto: `look-this-one`
 - Conectado al repo `AlejandroPu/LookThisOne` rama `main`
 - Plan: Hobby (gratuito)
@@ -67,6 +72,7 @@ users → workspaces → pages → links
 - Comportamiento: cada `git push` a `main` dispara un deploy automático
 
 ### Supabase
+
 - Proyecto: `AlejandroPu's Project`
 - URL: `https://gogaohyatpsmtqisiyat.supabase.co`
 - Plan: Free
