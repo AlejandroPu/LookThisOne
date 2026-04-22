@@ -1,52 +1,52 @@
 @AGENTS.md
 
-# LookThisOne — Guía para agentes de IA
+# LookThisOne — AI Agent Guide
 
-Este archivo se carga automáticamente en cada sesión de Claude Code (y otros
-agentes compatibles). Documenta el **cómo trabajar** en este repo: workflow,
-arquitectura, convenciones y restricciones.
+This file is automatically loaded in every Claude Code session (and other
+compatible agents). It documents **how to work** in this repo: workflow,
+architecture, conventions, and constraints.
 
-Para el pitch del producto y el setup local, leé `README.md`.
+For the product pitch and local setup, read `README.md`.
 
 ---
 
-## Qué es el proyecto
+## What the project is
 
-**LookThisOne** — link-in-bio SaaS (competidor de Linktree/Beacons).
-Dominio objetivo: `lookthis.one`.
-El repo es **público** y sirve también como portafolio del desarrollador.
+**LookThisOne** — link-in-bio SaaS.
+Target domain: `lookthis.one`.
+The repo is **public** and also serves as the developer's portfolio.
 
 ---
 
 ## Stack
 
-| Capa          | Tecnología                                     |
-| ------------- | ---------------------------------------------- |
-| Framework     | Next.js 16 (App Router, Turbopack build)       |
-| Lenguaje      | TypeScript                                     |
-| Estilos       | Tailwind CSS v4                                |
-| Base de datos | PostgreSQL (Supabase)                          |
-| ORM           | Prisma 7 + driver adapter `@prisma/adapter-pg` |
-| Auth          | Supabase Auth (vía `@supabase/ssr`)            |
-| Storage       | Supabase Storage                               |
-| Hosting       | Vercel (deploy automático desde `main`)        |
+| Layer     | Technology                                     |
+| --------- | ---------------------------------------------- |
+| Framework | Next.js 16 (App Router, Turbopack build)       |
+| Language  | TypeScript                                     |
+| Styles    | Tailwind CSS v4                                |
+| Database  | PostgreSQL (Supabase)                          |
+| ORM       | Prisma 7 + driver adapter `@prisma/adapter-pg` |
+| Auth      | Supabase Auth (via `@supabase/ssr`)            |
+| Storage   | Supabase Storage                               |
+| Hosting   | Vercel (auto-deploy from `main`)               |
 
 ---
 
-## Arquitectura
+## Architecture
 
 ```
-Visitante → Vercel CDN → Next.js App Router
+Visitor → Vercel CDN → Next.js App Router
                            ├── /[username]       (ISR, revalidate 60s)
-                           ├── /dashboard        (SPA privada, auth)
+                           ├── /dashboard        (private SPA, auth-gated)
                            └── API Routes
                                  ↓
                          Supabase (Postgres + Auth + Storage)
 ```
 
-### Modelo de datos
+### Data model
 
-Multi-tenant desde el inicio:
+Multi-tenant from the start:
 
 ```
 users → workspaces → pages → links
@@ -54,46 +54,46 @@ users → workspaces → pages → links
                            → analytics_events
 ```
 
-- `users.id` = `auth.users.id` de Supabase (UUID).
-- Un usuario puede pertenecer a varios `workspaces` vía `workspace_members`.
-- Cada `workspace` tiene varias `pages`; cada página, varios `links`.
-- `analytics_events` está separada; candidata a migrar a ClickHouse/Tinybird
-  cuando escale.
+- `users.id` = `auth.users.id` from Supabase (UUID).
+- A user can belong to multiple `workspaces` via `workspace_members`.
+- Each `workspace` has multiple `pages`; each page has multiple `links`.
+- `analytics_events` is kept separate; candidate for migration to ClickHouse/Tinybird
+  when it scales.
 
-### Seguridad
+### Security
 
-- **RLS activado en todas las tablas** (ver `prisma/migrations/*_rls_policies`).
-- Prisma se conecta con el rol `postgres` (superuser) y **omite RLS** — las
-  operaciones del servidor funcionan sin restricción.
-- El cliente Supabase (browser, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`) **sí**
-  está sujeto a RLS. Políticas actuales: lectura pública de páginas publicadas,
-  links activos de páginas publicadas y temas; insert anónimo en
-  `analytics_events`. El resto queda bloqueado hasta que exista flujo de auth.
+- **RLS enabled on all tables** (see `prisma/migrations/*_rls_policies`).
+- Prisma connects with the `postgres` role (superuser) and **bypasses RLS** —
+  server-side operations work without restriction.
+- The Supabase browser client (`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`) **is**
+  subject to RLS. Current policies: public read of published pages, active links
+  of published pages and themes; anonymous insert into `analytics_events`.
+  Everything else is blocked until an auth flow exists.
 
 ---
 
-## Workflow de desarrollo
+## Development workflow
 
-### Protección de `main`
+### `main` branch protection
 
-La rama `main` **está protegida**:
+The `main` branch **is protected**:
 
-- No se permiten pushes directos.
-- Cambios entran por Pull Request.
-- El check `Lint, typecheck & build` debe pasar.
-- No se permite force-push ni borrado de la rama.
-- Historial lineal obligatorio.
+- No direct pushes allowed.
+- Changes come in via Pull Request.
+- The `Lint, typecheck & build` check must pass.
+- Force-push and branch deletion are not allowed.
+- Linear history required.
 
-### Ciclo por cada cambio
+### Change cycle
 
 ```bash
-git checkout main && git pull              # alinearse con remoto
-git checkout -b <tipo>/<nombre-kebab>      # crear feature branch
-# ... editar, commitear ...
-git push -u origin <rama>                  # publicar rama
-gh pr create --title "..." --body "..."    # abrir PR
-# Esperar CI verde, revisar diff en GitHub
-# → el merge lo hace el owner desde la UI de GitHub (ver abajo)
+git checkout main && git pull              # sync with remote
+git checkout -b <type>/<kebab-name>        # create feature branch
+# ... edit, commit ...
+git push -u origin <branch>               # publish branch
+gh pr create --title "..." --body "..."   # open PR
+# Wait for green CI, review diff on GitHub
+# → the owner merges from the GitHub UI (see below)
 ```
 
 ### Automated pre-merge review
@@ -113,128 +113,126 @@ Rules:
   commits on the same branch and re-invoke.
 - Only once the verdict is `PASS`, tell the owner the PR is ready to merge.
 
-### Quién mergea (separación de roles)
+### Who merges (role separation)
 
-El merge a `main` es un **acto de ownership**: marca la entrada de código a
-producción y dispara el deploy automático a Vercel. Por eso:
+Merging to `main` is an **ownership act**: it marks code entering production
+and triggers the automatic Vercel deploy. Therefore:
 
-- **Los agentes de IA (Claude Code, etc.) NO ejecutan `gh pr merge`.**
-  Su trabajo termina al abrir el PR y confirmar que CI está verde.
-- **El owner del repo** revisa el diff en GitHub y hace el squash-merge +
-  delete branch desde la UI (o con `gh pr merge --squash --delete-branch`
-  ejecutado manualmente).
-- Tras el merge, el agente (o el dev) sincroniza: `git checkout main &&
-git pull`, borra la rama local, y continúa con el siguiente trabajo.
+- **AI agents (Claude Code, etc.) do NOT run `gh pr merge`.**
+  Their job ends at opening the PR and confirming CI is green.
+- **The repo owner** reviews the diff on GitHub and does the squash-merge +
+  delete branch from the UI (or manually with `gh pr merge --squash --delete-branch`).
+- After the merge, the agent (or dev) syncs: `git checkout main && git pull`,
+  deletes the local branch, and continues with the next task.
 
-Esto preserva el _four-eyes principle_ aunque el repo sea de un solo
-desarrollador, y evita que acciones irreversibles sobre `main` se ejecuten
-sin revisión humana final.
+This preserves the _four-eyes principle_ even in a solo-developer repo, and
+prevents irreversible actions on `main` from happening without a final human review.
 
-### Convenciones de ramas
+### Branch conventions
 
-| Prefijo  | Para qué                                    |
-| -------- | ------------------------------------------- |
-| `feat/`  | nueva funcionalidad                         |
-| `fix/`   | corrección de bug                           |
-| `chore/` | tooling, dependencias, refactor sin feature |
-| `docs/`  | solo documentación                          |
-| `test/`  | tests                                       |
+| Prefix   | Purpose                                      |
+| -------- | -------------------------------------------- |
+| `feat/`  | new feature                                  |
+| `fix/`   | bug fix                                      |
+| `chore/` | tooling, dependencies, refactor without feat |
+| `docs/`  | documentation only                           |
+| `test/`  | tests                                        |
 
-Ej: `feat/dashboard-login`, `fix/isr-cache-invalidation`, `docs/readme-badges`.
+E.g.: `feat/dashboard-login`, `fix/isr-cache-invalidation`, `docs/readme-badges`.
 
 ### Commits
 
-Usamos **Conventional Commits** con prefijos: `feat:`, `fix:`, `chore:`,
+We use **Conventional Commits** with prefixes: `feat:`, `fix:`, `chore:`,
 `docs:`, `test:`, `refactor:`, `perf:`, `style:`, `ci:`.
 
-Ejemplo:
+Example:
 
 ```
-feat(dashboard): login con email magic link
+feat(dashboard): magic-link email login
 
-Implementa sign-in con Supabase Auth usando OTP por email.
-Redirige a /dashboard después del callback.
+Implements sign-in with Supabase Auth using email OTP.
+Redirects to /dashboard after the callback.
 ```
 
-El **squash merge** de cada PR deja un solo commit por feature en `main` — el
-`git log` se lee como una timeline de features.
+The **squash merge** of each PR leaves one commit per feature on `main` —
+`git log` reads as a feature timeline.
 
-### Pre-commit automático
+### Automatic pre-commit
 
-`husky` + `lint-staged` corren en cada `git commit`:
+`husky` + `lint-staged` run on every `git commit`:
 
-- ESLint (`--fix`) y Prettier (`--write`) sobre archivos staged.
-- Si lint/format falla, el commit se aborta. Arreglar y reintentar.
+- ESLint (`--fix`) and Prettier (`--write`) over staged files.
+- If lint/format fails, the commit is aborted. Fix and retry.
 
-### CI en cada PR
+### CI on every PR
 
-`.github/workflows/ci.yml` corre, en este orden:
+`.github/workflows/ci.yml` runs in this order:
 
 1. `npm run format:check`
 2. `npm run lint`
 3. `npm run typecheck`
 4. `npm run build`
 
-Todos deben pasar antes de mergear.
+All must pass before merging.
 
 ---
 
-## Comandos útiles
+## Useful commands
 
 ```bash
-npm run dev               # Next.js en modo dev
-npm run build             # build de producción (genera Prisma + compila Next)
+npm run dev               # Next.js in dev mode
+npm run build             # production build (generates Prisma + compiles Next)
 npm run lint              # ESLint
-npm run format            # Prettier --write en todo el repo
-npm run format:check      # Prettier --check (lo que corre CI)
+npm run format            # Prettier --write across the whole repo
+npm run format:check      # Prettier --check (what CI runs)
 npm run typecheck         # tsc --noEmit
 
-# Prisma (leen .env.local vía dotenv-cli)
-npm run prisma:migrate    # crear/aplicar migración en dev
-npm run prisma:deploy     # aplicar migraciones en prod (para CI/Vercel)
-npm run prisma:studio     # UI para explorar/editar datos
-npm run prisma:generate   # regenerar Prisma Client
+# Prisma (reads .env.local via dotenv-cli)
+npm run prisma:migrate    # create/apply migration in dev
+npm run prisma:deploy     # apply migrations in prod (for CI/Vercel)
+npm run prisma:studio     # UI to browse/edit data
+npm run prisma:generate   # regenerate Prisma Client
 ```
 
 ---
 
-## Convenciones de código
+## Code conventions
 
-- **Imports absolutos** vía alias `@/` (configurado en `tsconfig.json`).
-  Ejemplo: `import { prisma } from '@/lib/prisma'`.
-- **Server-first**: usar Server Components y Server Actions por defecto.
-  Marcar `'use client'` solo cuando haga falta (interactividad, hooks del browser).
-- **Datos públicos (perfiles)**: leer con Prisma desde Server Components
-  (bypasea RLS, tipado fuerte, más rápido).
-- **Datos del usuario autenticado**: usar Supabase client (respeta RLS, tiene
-  la sesión).
-- **Imágenes**: preferir `next/image` cuando sea posible; el `<img>` actual en
-  `/[username]` es temporal (los avatares vienen de URL externa de Supabase
-  Storage y requieren configurar `images.remotePatterns` — pendiente).
-
----
-
-## Qué NO hacer
-
-- ❌ **No tocar el sitio legacy en Hostinger** (`lookthis.one` actual sirve
-  una versión vieja HTML/CSS/JS vanilla — no está en este repo).
-- ❌ **No commitear secretos**: `.env*` está en `.gitignore` (excepto
-  `.env.example`). Si un secreto aparece en el historial, rotar inmediatamente.
-- ❌ **No bypassear RLS desde el cliente**: si necesitás lectura/escritura
-  privilegiada desde la UI, pasá por una Server Action o API Route con Prisma.
-- ❌ **No pushear a `main`**: ni siquiera con un empty commit. Siempre branch + PR.
-- ❌ **No usar `prisma migrate reset` en prod**: borra toda la data.
-  Solo en dev local.
-- ❌ **No mergear con CI en rojo**: el ruleset lo impide, pero aunque pudieras,
-  no.
+- **Absolute imports** via `@/` alias (configured in `tsconfig.json`).
+  Example: `import { prisma } from '@/lib/prisma'`.
+- **Server-first**: use Server Components and Server Actions by default.
+  Mark `'use client'` only when needed (interactivity, browser hooks).
+- **Public data (profiles)**: read with Prisma from Server Components
+  (bypasses RLS, strong typing, faster).
+- **Authenticated user data**: use the Supabase client (respects RLS, holds
+  the session).
+- **Images**: prefer `next/image` when possible; the current `<img>` in
+  `/[username]` is temporary (avatars come from an external Supabase Storage
+  URL and require configuring `images.remotePatterns` — pending).
 
 ---
 
-## Infraestructura externa (referencia rápida)
+## What NOT to do
+
+- ❌ **Do not touch the legacy site on Hostinger** (`lookthis.one` currently
+  serves an old vanilla HTML/CSS/JS version — not in this repo).
+- ❌ **Do not commit secrets**: `.env*` is in `.gitignore` (except
+  `.env.example`). If a secret appears in history, rotate it immediately.
+- ❌ **Do not bypass RLS from the client**: for privileged reads/writes from
+  the UI, go through a Server Action or API Route with Prisma.
+- ❌ **Do not push to `main`**: not even an empty commit. Always branch + PR.
+- ❌ **Do not run `prisma migrate reset` in prod**: it wipes all data.
+  Dev local only.
+- ❌ **Do not merge with CI red**: the ruleset prevents it, but even if you
+  could — don't.
+
+---
+
+## External infrastructure (quick reference)
 
 - **GitHub**: `https://github.com/AlejandroPu/LookThisOne`
-- **Vercel**: proyecto `look-this-one`, deploy automático desde `main`.
-- **Supabase**: proyecto en `gogaohyatpsmtqisiyat.supabase.co` (Free tier).
-  Data API activado, RLS automático activado.
+- **Vercel**: project `look-this-one`, auto-deploy from `main`.
+- **Supabase**: project at `gogaohyatpsmtqisiyat.supabase.co` (Free tier).
+  Data API enabled, automatic RLS enabled.
 
-Variables de entorno necesarias: ver `.env.example`.
+Required environment variables: see `.env.example`.
