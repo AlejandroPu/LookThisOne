@@ -10,7 +10,7 @@ A professional link-in-bio SaaS — one page, all your links, with analytics and
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38BDF8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Deploy on Vercel](https://img.shields.io/badge/Vercel-deploy-black?logo=vercel)](https://vercel.com)
 
-**Live:** [lookthis.one](https://lookthis.one) &nbsp;·&nbsp; **Repo:** [github.com/AlejandroPu/LookThisOne](https://github.com/AlejandroPu/LookThisOne)
+**Live:** [lookthis.one legacy version](https://lookthis.one) &nbsp;·&nbsp; **Repo(yet not online available):** [github.com/AlejandroPu/LookThisOne](https://github.com/AlejandroPu/LookThisOne)
 
 > The landing and UI currently ship with placeholder copy and minimal styling. Product polish is intentionally deferred until after the core flows (auth, dashboard, editor) land.
 
