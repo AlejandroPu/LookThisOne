@@ -202,10 +202,19 @@ npm run prisma:generate   # regenerate Prisma Client
   Example: `import { prisma } from '@/lib/prisma'`.
 - **Server-first**: use Server Components and Server Actions by default.
   Mark `'use client'` only when needed (interactivity, browser hooks).
-- **Public data (profiles)**: read with Prisma from Server Components
-  (bypasses RLS, strong typing, faster).
-- **Authenticated user data**: use the Supabase client (respects RLS, holds
-  the session).
+- **Reads (public and authenticated)**: use Prisma from Server Components.
+  It bypasses RLS, gives end-to-end typing, and avoids duplicating ownership
+  rules as SQL policies. Always verify `auth.getUser()` first and scope the
+  query to the caller's `userId` / workspace.
+- **Writes from the authenticated UI**: Server Actions with Prisma, wrapped
+  in a transaction when they span multiple tables (see
+  `src/app/onboarding/actions.ts`). Re-resolve the target entity from the
+  session — never trust a hidden `id` field on the form.
+- **Supabase client on the server**: only for auth (`auth.getUser`,
+  `signIn*`, OAuth redirects). Prefer Prisma for data.
+- **Supabase client in the browser**: reserved for features that genuinely
+  need it (realtime subscriptions, optimistic UI against RLS-protected
+  tables). Not used yet.
 - **Images**: prefer `next/image` when possible; the current `<img>` in
   `/[username]` is temporary (avatars come from an external Supabase Storage
   URL and require configuring `images.remotePatterns` — pending).
