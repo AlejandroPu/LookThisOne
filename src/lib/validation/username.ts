@@ -41,6 +41,8 @@ const RESERVED_USERNAMES = new Set<string>([
   'support',
   'terms',
   'www',
+  // Note: '_next' is already blocked by the regex (must start with [a-z0-9]),
+  // but kept here as an explicit signal of intent.
   '_next',
 ]);
 

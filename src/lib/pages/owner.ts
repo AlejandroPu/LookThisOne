@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { prisma } from '@/lib/prisma';
 
 // Returns the first page owned by the given user, via workspace_members.
