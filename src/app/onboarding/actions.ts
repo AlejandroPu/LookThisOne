@@ -1,25 +1,20 @@
 'use server';
 
 import { Prisma } from '@prisma/client';
-import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
+import { redirectIfOnboarded } from '@/lib/auth/dal';
 import { prisma } from '@/lib/prisma';
-import { createClient } from '@/lib/supabase/server';
 import {
   USERNAME_ERROR_MESSAGES,
   validateUsername,
 } from '@/lib/validation/username';
 
 export async function createInitialWorkspace(formData: FormData) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect('/login');
-  }
+  // Auth gate + bounce if the caller already completed onboarding. Prevents a
+  // malicious/stale submission from creating a second workspace for the same
+  // user.
+  const user = await redirectIfOnboarded();
 
   const result = validateUsername(String(formData.get('username') ?? ''));
 
@@ -62,9 +57,9 @@ export async function createInitialWorkspace(formData: FormData) {
     });
   } catch (error) {
     // P2002 = unique constraint violation. Happens when the chosen username is
-    // taken on `pages.username` or `workspaces.slug`. We let Postgres be the
-    // source of truth for uniqueness rather than a pre-flight SELECT, which
-    // would race against a concurrent signup.
+    // already taken on `pages.username` or `workspaces.slug`. We let Postgres
+    // be the source of truth for uniqueness rather than a pre-flight SELECT,
+    // which would race against a concurrent signup.
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === 'P2002'
@@ -74,6 +69,5 @@ export async function createInitialWorkspace(formData: FormData) {
     throw error;
   }
 
-  revalidatePath('/dashboard');
   redirect('/dashboard');
 }

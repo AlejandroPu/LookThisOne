@@ -202,14 +202,23 @@ npm run prisma:generate   # regenerate Prisma Client
   Example: `import { prisma } from '@/lib/prisma'`.
 - **Server-first**: use Server Components and Server Actions by default.
   Mark `'use client'` only when needed (interactivity, browser hooks).
+- **Auth checks live in the DAL** (`src/lib/auth/dal.ts`), not in layouts.
+  Next 16 layouts do not re-render on client-side navigation and render in
+  parallel with their pages on initial hit — neither property is compatible
+  with using them as an auth gate. Every protected page, Server Action and
+  Route Handler must call `verifySession()` / `requirePage()` /
+  `redirectIfOnboarded()` from the DAL. The functions are wrapped in React's
+  `cache()`, so calling them from multiple components in the same render
+  pass costs a single Supabase round trip.
 - **Reads (public and authenticated)**: use Prisma from Server Components.
   It bypasses RLS, gives end-to-end typing, and avoids duplicating ownership
-  rules as SQL policies. Always verify `auth.getUser()` first and scope the
-  query to the caller's `userId` / workspace.
+  rules as SQL policies. Scope the query to the caller's `userId` /
+  workspace after the DAL call.
 - **Writes from the authenticated UI**: Server Actions with Prisma, wrapped
   in a transaction when they span multiple tables (see
-  `src/app/onboarding/actions.ts`). Re-resolve the target entity from the
-  session — never trust a hidden `id` field on the form.
+  `src/app/onboarding/actions.ts`). Call the DAL first; re-resolve the
+  target entity from the session — never trust a hidden `id` field on the
+  form.
 - **Supabase client on the server**: only for auth (`auth.getUser`,
   `signIn*`, OAuth redirects). Prefer Prisma for data.
 - **Supabase client in the browser**: reserved for features that genuinely

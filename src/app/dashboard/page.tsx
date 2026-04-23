@@ -1,7 +1,6 @@
 import Link from 'next/link';
 
-import { getOwnerPage } from '@/lib/pages/owner';
-import { createClient } from '@/lib/supabase/server';
+import { requirePage } from '@/lib/auth/dal';
 
 import { togglePublish } from './actions';
 
@@ -10,15 +9,7 @@ export const metadata = {
 };
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // The dashboard layout already gates auth + onboarding, so `user` and `page`
-  // are guaranteed here. The non-null assertions are narrow, documented, and
-  // survive a layout-only bypass (e.g. direct RSC render in tests).
-  const page = (await getOwnerPage(user!.id))!;
+  const { user, page } = await requirePage();
   const publicPath = `/${page.username}`;
 
   return (
@@ -27,7 +18,7 @@ export default async function DashboardPage() {
         <div>
           <h1 className="text-2xl font-semibold">Dashboard</h1>
           <p className="text-sm text-gray-600">
-            Signed in as <span className="font-mono">{user!.email}</span>
+            Signed in as <span className="font-mono">{user.email}</span>
           </p>
         </div>
         <form action="/auth/signout" method="post">

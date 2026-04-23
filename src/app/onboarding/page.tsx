@@ -1,3 +1,5 @@
+import { redirectIfOnboarded } from '@/lib/auth/dal';
+
 import { createInitialWorkspace } from './actions';
 
 export const metadata = {
@@ -11,6 +13,10 @@ export default async function OnboardingPage({
 }: {
   searchParams: SearchParams;
 }) {
+  // Auth gate + already-onboarded redirect. Must run here (not in the layout)
+  // because Next 16 layouts can't reliably gate child pages.
+  await redirectIfOnboarded();
+
   const { error } = await searchParams;
 
   return (
@@ -46,12 +52,12 @@ export default async function OnboardingPage({
             required
             minLength={3}
             maxLength={20}
-            pattern="[a-z0-9][a-z0-9_-]{2,19}"
             className="rounded border border-gray-300 px-3 py-2 font-mono"
             placeholder="yourname"
           />
           <span className="text-xs text-gray-500">
-            3–20 chars. Lowercase letters, digits, underscore or hyphen.
+            3–20 chars. Lowercase letters, digits, underscore or hyphen. Input
+            is normalised to lowercase before saving.
           </span>
         </label>
         <button
