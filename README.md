@@ -10,7 +10,9 @@ A professional link-in-bio SaaS — one page, all your links, with analytics and
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38BDF8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Deploy on Vercel](https://img.shields.io/badge/Vercel-deploy-black?logo=vercel)](https://vercel.com)
 
-**Legacy site:** [github.com/AlejandroPu/LookThisOne-legacy](https://github.com/AlejandroPu/LookThisOne-legacy) &nbsp;·&nbsp; **Repo (not available online yet):** [github.com/AlejandroPu/LookThisOne](https://github.com/AlejandroPu/LookThisOne)
+**Legacy site (live):** [lookthis.one](https://lookthis.one) &nbsp;·&nbsp; **v1 preview (work in progress):** [look-this-one.vercel.app](https://look-this-one.vercel.app) &nbsp;·&nbsp; **Repo:** [github.com/AlejandroPu/LookThisOne](https://github.com/AlejandroPu/LookThisOne)
+
+> **Note:** `lookthis.one` currently serves a legacy vanilla HTML/CSS/JS site from a separate repo. This repo is the v1 rebuild — deployed to Vercel as a preview while the new version is in development. Accounts created during this beta period may be wiped before the official launch.
 
 > The landing and UI currently ship with placeholder copy and minimal styling. Product polish is intentionally deferred until after the core flows (auth, dashboard, editor) land.
 
@@ -19,7 +21,7 @@ A professional link-in-bio SaaS — one page, all your links, with analytics and
 ## Features
 
 - **Public profile pages** at `/[username]`, served with Next.js ISR and on-demand revalidation so creator edits appear instantly while the CDN absorbs visitor traffic.
-- **Multi-tenant from day one** — `users → workspaces → pages → links` — ready for team/agency plans without a painful migration later.
+- **Multi-tenant from day one** — `users → workspaces → pages → links` — the schema supports multiple pages per account without a painful migration later.
 - **Row-Level Security** enabled on every table. Server uses Prisma (bypasses RLS); browser uses Supabase client (respects RLS).
 - **First-party analytics** table, designed to migrate to a purpose-built store (Tinybird / ClickHouse) when volume justifies it.
 - **Professional workflow**: protected `main`, PR-only merges, required CI, Conventional Commits, squash history.
@@ -156,12 +158,14 @@ See [`CLAUDE.md`](./CLAUDE.md) for the full contributor guide (also read by AI a
 - [x] Multi-tenant schema with RLS
 - [x] Public `/[username]` page with ISR
 - [x] Protected `main`, CI, professional tooling
-- [ ] Supabase Auth flows (sign-in, sign-up, session)
-- [ ] Dashboard: create/edit pages and links
-- [ ] Theme editor
-- [ ] Visual redesign (planned with Claude Design)
+- [x] Auth flows: email/password + Google OAuth
+- [x] Onboarding: username picker, workspace + page creation
+- [x] Dashboard: publish/unpublish toggle, live preview link
+- [ ] Links editor: add, edit, reorder, enable/disable
+- [ ] Profile metadata: display name, bio, avatar
+- [ ] Theme picker
 - [ ] Analytics dashboard
-- [ ] Custom subdomains on paid plans
+- [ ] Visual redesign
 
 ---
 
