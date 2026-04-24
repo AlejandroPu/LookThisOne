@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { requirePage } from '@/lib/auth/dal';
 
 import { togglePublish } from './actions';
+import { LinksEditor } from './LinksEditor';
 
 export const metadata = {
   title: 'Dashboard',
@@ -75,9 +76,7 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      <section className="mt-8 rounded border border-dashed border-gray-300 p-6 text-sm text-gray-600">
-        Links editor lands here in the next PR.
-      </section>
+      <LinksEditor links={page.links} />
     </main>
   );
 }
