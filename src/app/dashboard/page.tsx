@@ -4,6 +4,7 @@ import { requirePage } from '@/lib/auth/dal';
 
 import { togglePublish } from './actions';
 import { LinksEditor } from './LinksEditor';
+import { ProfileEditor } from './ProfileEditor';
 
 export const metadata = {
   title: 'Dashboard',
@@ -75,6 +76,13 @@ export default async function DashboardPage() {
           )}
         </div>
       </section>
+
+      <ProfileEditor
+        title={page.title}
+        bio={page.bio}
+        avatarUrl={page.avatarUrl}
+        username={page.username}
+      />
 
       <LinksEditor links={page.links} />
     </main>

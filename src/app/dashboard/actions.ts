@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 
 import { requirePage } from '@/lib/auth/dal';
 import { prisma } from '@/lib/prisma';
+import { createClient } from '@/lib/supabase/server';
 import { validateLink, LINK_ERROR_MESSAGES } from '@/lib/validation/link';
 
 export async function togglePublish() {
@@ -16,6 +17,74 @@ export async function togglePublish() {
 
   revalidatePath('/dashboard');
   revalidatePath(`/${page.username}`);
+}
+
+// --- Profile actions ---
+
+export type ProfileActionState = { error?: string; success?: boolean } | null;
+
+export async function updateProfile(
+  _prev: ProfileActionState,
+  formData: FormData,
+): Promise<ProfileActionState> {
+  const { user, page } = await requirePage();
+
+  const title = formData.get('title');
+  const bio = formData.get('bio');
+  const avatarFile = formData.get('avatar');
+
+  if (typeof title !== 'string') return { error: 'Invalid display name.' };
+  if (typeof bio !== 'string') return { error: 'Invalid bio.' };
+
+  const trimmedTitle = title.trim();
+  const trimmedBio = bio.trim();
+
+  if (trimmedTitle.length > 100)
+    return { error: 'Display name is too long (max 100 characters).' };
+  if (trimmedBio.length > 300)
+    return { error: 'Bio is too long (max 300 characters).' };
+
+  let avatarUrl = page.avatarUrl;
+
+  if (avatarFile instanceof File && avatarFile.size > 0) {
+    if (!avatarFile.type.startsWith('image/'))
+      return { error: 'Avatar must be an image file.' };
+    if (avatarFile.size > 2 * 1024 * 1024)
+      return { error: 'Avatar must be smaller than 2 MB.' };
+
+    const supabase = await createClient();
+    const bytes = await avatarFile.arrayBuffer();
+
+    // Path is always derived from the authenticated user's ID (from the DAL),
+    // never from user-supplied input, so no path traversal is possible.
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(`${user.id}/avatar`, bytes, {
+        contentType: avatarFile.type,
+        upsert: true,
+      });
+
+    if (uploadError) return { error: 'Failed to upload avatar. Try again.' };
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('avatars').getPublicUrl(`${user.id}/avatar`);
+
+    avatarUrl = publicUrl;
+  }
+
+  await prisma.page.update({
+    where: { id: page.id },
+    data: {
+      title: trimmedTitle || null,
+      bio: trimmedBio || null,
+      avatarUrl,
+    },
+  });
+
+  revalidatePath('/dashboard');
+  revalidatePath(`/${page.username}`);
+  return { success: true };
 }
 
 // --- Link actions ---
