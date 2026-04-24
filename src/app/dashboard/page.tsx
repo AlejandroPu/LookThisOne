@@ -1,10 +1,12 @@
 import Link from 'next/link';
 
 import { requirePage } from '@/lib/auth/dal';
+import { prisma } from '@/lib/prisma';
 
 import { togglePublish } from './actions';
 import { LinksEditor } from './LinksEditor';
 import { ProfileEditor } from './ProfileEditor';
+import { ThemePicker } from './ThemePicker';
 
 export const metadata = {
   title: 'Dashboard',
@@ -13,6 +15,18 @@ export const metadata = {
 export default async function DashboardPage() {
   const { user, page } = await requirePage();
   const publicPath = `/${page.username}`;
+
+  const builtInThemes = await prisma.theme.findMany({
+    where: { isBuiltIn: true },
+    select: {
+      id: true,
+      name: true,
+      background: true,
+      foreground: true,
+      accent: true,
+    },
+    orderBy: { name: 'asc' },
+  });
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-12">
@@ -82,6 +96,18 @@ export default async function DashboardPage() {
         bio={page.bio}
         avatarUrl={page.avatarUrl}
         username={page.username}
+      />
+
+      <ThemePicker
+        themes={builtInThemes}
+        currentThemeId={page.themeId}
+        page={{
+          title: page.title,
+          bio: page.bio,
+          avatarUrl: page.avatarUrl,
+          username: page.username,
+          links: page.links,
+        }}
       />
 
       <LinksEditor links={page.links} />
