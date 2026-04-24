@@ -79,15 +79,15 @@ export function ProfileEditor({
             >
               Change photo
             </button>
-            <p className="mt-1 text-xs text-gray-400">
-              JPG, PNG or WebP · max 2 MB
-            </p>
+            <p className="mt-1 text-xs text-gray-400">Any image · max 2 MB</p>
           </div>
+          {/* aria-hidden: the visible button above is the labeled control */}
           <input
             ref={fileInputRef}
             type="file"
             name="avatar"
             accept="image/*"
+            aria-hidden="true"
             className="hidden"
             onChange={handleFileChange}
           />

@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import type { Metadata } from 'next';
@@ -7,7 +8,9 @@ export const revalidate = 60;
 
 type Params = Promise<{ username: string }>;
 
-async function getPage(username: string) {
+// cache() deduplicates the DB call when generateMetadata and the page
+// component both call getPage in the same render pass.
+const getPage = cache(async (username: string) => {
   return prisma.page.findFirst({
     where: { username, published: true },
     include: {
@@ -18,7 +21,7 @@ async function getPage(username: string) {
       },
     },
   });
-}
+});
 
 export async function generateMetadata({
   params,

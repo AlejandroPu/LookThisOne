@@ -55,6 +55,8 @@ export async function updateProfile(
     const supabase = await createClient();
     const bytes = await avatarFile.arrayBuffer();
 
+    // Path is always derived from the authenticated user's ID (from the DAL),
+    // never from user-supplied input, so no path traversal is possible.
     const { error: uploadError } = await supabase.storage
       .from('avatars')
       .upload(`${user.id}/avatar`, bytes, {
