@@ -177,6 +177,28 @@ export async function toggleLinkEnabled(linkId: string): Promise<void> {
   revalidatePath(`/${page.username}`);
 }
 
+// --- Theme actions ---
+
+export async function setTheme(themeId: string | null): Promise<void> {
+  const { page } = await requirePage();
+
+  if (themeId !== null) {
+    const theme = await prisma.theme.findFirst({
+      where: { id: themeId, isBuiltIn: true },
+      select: { id: true },
+    });
+    if (!theme) return;
+  }
+
+  await prisma.page.update({
+    where: { id: page.id },
+    data: { themeId },
+  });
+
+  revalidatePath('/dashboard');
+  revalidatePath(`/${page.username}`);
+}
+
 export async function reorderLinks(orderedIds: string[]): Promise<void> {
   const { page } = await requirePage();
 
