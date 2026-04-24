@@ -10,7 +10,7 @@ A professional link-in-bio SaaS — one page, all your links, with analytics and
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38BDF8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Deploy on Vercel](https://img.shields.io/badge/Vercel-deploy-black?logo=vercel)](https://vercel.com)
 
-**Legacy site (live):** [lookthis.one](https://lookthis.one) &nbsp;·&nbsp; **v1 preview (work in progress):** [look-this-one.vercel.app](https://look-this-one.vercel.app) &nbsp;·&nbsp; **Repo:** [github.com/AlejandroPu/LookThisOne](https://github.com/AlejandroPu/LookThisOne)
+**v1 preview (work in progress):** [look-this-one.vercel.app](https://look-this-one.vercel.app) &nbsp;·&nbsp; **Live site repo:** [LookThisOne-legacy](https://github.com/AlejandroPu/LookThisOne-legacy)
 
 > **Note:** `lookthis.one` currently serves a legacy vanilla HTML/CSS/JS site from a separate repo. This repo is the v1 rebuild — deployed to Vercel as a preview while the new version is in development. Accounts created during this beta period may be wiped before the official launch.
 
