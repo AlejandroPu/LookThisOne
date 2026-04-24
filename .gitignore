@@ -40,6 +40,11 @@ yarn-error.log*
 # local notes / scratch
 .private/
 
+# Claude Code — per-user and runtime files
+# (shared config lives in .claude/settings.json and .claude/agents/, which ARE tracked)
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
