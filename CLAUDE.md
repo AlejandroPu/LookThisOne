@@ -10,6 +10,26 @@ For the product pitch and local setup, read `README.md`.
 
 ---
 
+## Session-start checklist
+
+Do these at the top of every session — in order, before writing any code:
+
+1. **Read `.private/strategy.md`** — it contains private roadmap context that
+   must not leak into public artifacts. Never quote it verbatim in commits,
+   PRs, or README.
+2. **Read `.private/backlog.md`** — recover the current cycle, its sub-tasks,
+   and the "Next up" queue.
+3. **Run `git status`** — confirm the branch state and any uncommitted work.
+4. **Read the relevant Next.js 16 guide** from
+   `node_modules/next/dist/docs/01-app/` before writing any framework code.
+   APIs, conventions and file structure may differ from training data.
+
+Skipping step 4 caused a real incident: writing layout-based auth gates that
+silently failed because layouts render in parallel with their pages in Next 16.
+The fix took an extra PR round. Read first, then code.
+
+---
+
 ## What the project is
 
 **LookThisOne** — link-in-bio SaaS.
