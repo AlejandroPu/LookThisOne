@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import { prisma } from '@/lib/prisma';
 
@@ -56,10 +57,11 @@ export default async function ProfilePage({ params }: { params: Params }) {
     >
       <div className="flex w-full max-w-md flex-col items-center">
         {page.avatarUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={page.avatarUrl}
             alt={page.title ?? page.username}
+            width={96}
+            height={96}
             className="mb-4 h-24 w-24 rounded-full object-cover"
           />
         ) : (

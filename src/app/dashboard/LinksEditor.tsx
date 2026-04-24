@@ -315,6 +315,7 @@ export function LinksEditor({ links: initialLinks }: { links: Link[] }) {
         <p className="text-sm text-gray-400">No links yet. Add one below.</p>
       ) : (
         <DndContext
+          id="links-dnd"
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
