@@ -107,3 +107,33 @@ export async function toggleLinkEnabled(linkId: string): Promise<void> {
   revalidatePath('/dashboard');
   revalidatePath(`/${page.username}`);
 }
+
+export async function reorderLinks(orderedIds: string[]): Promise<void> {
+  const { page } = await requirePage();
+
+  const existing = await prisma.link.findMany({
+    where: { pageId: page.id },
+    select: { id: true },
+  });
+
+  // Reject if the submitted order is not a permutation of the page's links:
+  // same count, same set. Prevents partial reorders, cross-page IDs, and
+  // duplicates from corrupting `position`.
+  const existingIds = new Set(existing.map((l) => l.id));
+  if (
+    orderedIds.length !== existingIds.size ||
+    new Set(orderedIds).size !== orderedIds.length ||
+    !orderedIds.every((id) => existingIds.has(id))
+  ) {
+    return;
+  }
+
+  await prisma.$transaction(
+    orderedIds.map((id, index) =>
+      prisma.link.update({ where: { id }, data: { position: index } }),
+    ),
+  );
+
+  revalidatePath('/dashboard');
+  revalidatePath(`/${page.username}`);
+}

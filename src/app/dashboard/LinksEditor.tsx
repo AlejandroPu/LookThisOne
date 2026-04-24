@@ -9,10 +9,28 @@ import {
   useTransition,
 } from 'react';
 import type { Link } from '@prisma/client';
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 import {
   createLink,
   deleteLink,
+  reorderLinks,
   toggleLinkEnabled,
   updateLink,
   type LinkActionState,
@@ -22,7 +40,8 @@ import {
 
 type OptimisticAction =
   | { type: 'toggle'; id: string }
-  | { type: 'delete'; id: string };
+  | { type: 'delete'; id: string }
+  | { type: 'reorder'; orderedIds: string[] };
 
 function optimisticReducer(links: Link[], action: OptimisticAction): Link[] {
   if (action.type === 'toggle') {
@@ -32,6 +51,12 @@ function optimisticReducer(links: Link[], action: OptimisticAction): Link[] {
   }
   if (action.type === 'delete') {
     return links.filter((l) => l.id !== action.id);
+  }
+  if (action.type === 'reorder') {
+    const byId = new Map(links.map((l) => [l.id, l]));
+    return action.orderedIds
+      .map((id) => byId.get(id))
+      .filter((l): l is Link => l !== undefined);
   }
   return links;
 }
@@ -92,17 +117,20 @@ function LinkEditForm({ link, onDone }: { link: Link; onDone: () => void }) {
 
 function LinkRow({
   link,
+  dragHandle,
   onEdit,
   onToggle,
   onDelete,
 }: {
   link: Link;
+  dragHandle?: React.ReactNode;
   onEdit: () => void;
   onToggle: () => void;
   onDelete: () => void;
 }) {
   return (
     <div className="flex items-start gap-3">
+      {dragHandle}
       <button
         type="button"
         onClick={onToggle}
@@ -139,6 +167,80 @@ function LinkRow({
   );
 }
 
+function SortableLinkItem({
+  link,
+  isEditing,
+  onEdit,
+  onEditDone,
+  onToggle,
+  onDelete,
+}: {
+  link: Link;
+  isEditing: boolean;
+  onEdit: () => void;
+  onEditDone: () => void;
+  onToggle: () => void;
+  onDelete: () => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: link.id, disabled: isEditing });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const dragHandle = (
+    <button
+      type="button"
+      aria-label={`Reorder ${link.title}`}
+      className="mt-0.5 shrink-0 cursor-grab touch-none text-gray-400 hover:text-gray-700 active:cursor-grabbing disabled:cursor-not-allowed disabled:opacity-30"
+      disabled={isEditing}
+      {...attributes}
+      {...listeners}
+    >
+      {/* Grip icon (6 dots) */}
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 14 14"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <circle cx="4" cy="3" r="1.2" />
+        <circle cx="10" cy="3" r="1.2" />
+        <circle cx="4" cy="7" r="1.2" />
+        <circle cx="10" cy="7" r="1.2" />
+        <circle cx="4" cy="11" r="1.2" />
+        <circle cx="10" cy="11" r="1.2" />
+      </svg>
+    </button>
+  );
+
+  return (
+    <li ref={setNodeRef} style={style}>
+      {isEditing ? (
+        <LinkEditForm link={link} onDone={onEditDone} />
+      ) : (
+        <LinkRow
+          link={link}
+          dragHandle={dragHandle}
+          onEdit={onEdit}
+          onToggle={onToggle}
+          onDelete={onDelete}
+        />
+      )}
+    </li>
+  );
+}
+
 // --- Main component ---
 
 export function LinksEditor({ links: initialLinks }: { links: Link[] }) {
@@ -154,6 +256,15 @@ export function LinksEditor({ links: initialLinks }: { links: Link[] }) {
     null as LinkActionState,
   );
   const formRef = useRef<HTMLFormElement>(null);
+
+  const sensors = useSensors(
+    // 6px activation distance so clicks on buttons inside the row don't
+    // trigger a drag accidentally.
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
   useEffect(() => {
     if (createState !== null && !createState.error) {
@@ -175,6 +286,27 @@ export function LinksEditor({ links: initialLinks }: { links: Link[] }) {
     });
   }
 
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = optimisticLinks.findIndex((l) => l.id === active.id);
+    const newIndex = optimisticLinks.findIndex((l) => l.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const orderedIds = arrayMove(optimisticLinks, oldIndex, newIndex).map(
+      (l) => l.id,
+    );
+
+    // dnd-kit fires this callback via unstable_batchedUpdates (legacy React
+    // batching), which does NOT count as a transition for useOptimistic.
+    // Wrap explicitly so the dispatch is valid.
+    startTransition(async () => {
+      dispatchOptimistic({ type: 'reorder', orderedIds });
+      await reorderLinks(orderedIds);
+    });
+  }
+
   return (
     <section className="mt-8 space-y-6 rounded border border-gray-200 p-6">
       <h2 className="text-sm font-medium text-gray-500">Links</h2>
@@ -182,22 +314,30 @@ export function LinksEditor({ links: initialLinks }: { links: Link[] }) {
       {optimisticLinks.length === 0 ? (
         <p className="text-sm text-gray-400">No links yet. Add one below.</p>
       ) : (
-        <ul className="space-y-4">
-          {optimisticLinks.map((link) => (
-            <li key={link.id}>
-              {editingId === link.id ? (
-                <LinkEditForm link={link} onDone={() => setEditingId(null)} />
-              ) : (
-                <LinkRow
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={optimisticLinks.map((l) => l.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <ul className="space-y-4">
+              {optimisticLinks.map((link) => (
+                <SortableLinkItem
+                  key={link.id}
                   link={link}
+                  isEditing={editingId === link.id}
                   onEdit={() => setEditingId(link.id)}
+                  onEditDone={() => setEditingId(null)}
                   onToggle={() => handleToggle(link.id)}
                   onDelete={() => handleDelete(link.id)}
                 />
-              )}
-            </li>
-          ))}
-        </ul>
+              ))}
+            </ul>
+          </SortableContext>
+        </DndContext>
       )}
 
       <div className="border-t border-gray-100 pt-4">
