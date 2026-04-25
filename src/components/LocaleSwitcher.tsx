@@ -4,6 +4,9 @@ import { useTransition } from 'react';
 import { useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
+// next-intl's localeCookie config drives middleware auto-detection only.
+// Without URL-prefix routing (localePrefix: 'never') there is no middleware,
+// so the client must write the cookie manually before calling router.refresh().
 function setLocaleCookie(locale: string) {
   const maxAge = 60 * 60 * 24 * 365;
   const secure =
@@ -30,6 +33,7 @@ export function LocaleSwitcher() {
       <button
         onClick={() => handleChange('en')}
         disabled={locale === 'en' || isPending}
+        aria-label="English"
         className={
           locale === 'en'
             ? 'font-semibold'
@@ -44,6 +48,7 @@ export function LocaleSwitcher() {
       <button
         onClick={() => handleChange('es')}
         disabled={locale === 'es' || isPending}
+        aria-label="Español"
         className={
           locale === 'es'
             ? 'font-semibold'
