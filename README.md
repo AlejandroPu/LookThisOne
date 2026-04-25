@@ -161,11 +161,15 @@ See [`CLAUDE.md`](./CLAUDE.md) for the full contributor guide (also read by AI a
 - [x] Auth flows: email/password + Google OAuth
 - [x] Onboarding: username picker, workspace + page creation
 - [x] Dashboard: publish/unpublish toggle, live preview link
-- [ ] Links editor: add, edit, reorder, enable/disable
-- [ ] Profile metadata: display name, bio, avatar
-- [ ] Theme picker
-- [ ] Analytics dashboard
-- [ ] Visual redesign
+- [x] Links editor: add, edit, reorder, enable/disable
+- [x] Profile metadata: display name, bio, avatar
+- [x] Theme picker
+- [x] Analytics: page view + link click tracking (GDPR-gated)
+- [x] Account settings: change username, email, password, delete account
+- [x] Cookie consent banner (GDPR)
+- [x] Internationalisation: EN / ES
+- [ ] Analytics dashboard (view your stats)
+- [ ] Visual redesign with Claude Design
 
 ---
 
