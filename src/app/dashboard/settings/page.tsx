@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 import { requirePage } from '@/lib/auth/dal';
 
@@ -17,6 +18,12 @@ export default async function SettingsPage() {
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-12">
+      <Link
+        href="/dashboard"
+        className="mb-6 inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700"
+      >
+        <span aria-hidden="true">←</span> Back to dashboard
+      </Link>
       <h1 className="text-2xl font-semibold">Account settings</h1>
       <p className="mt-1 text-sm text-gray-500">
         Signed in as <span className="font-mono">{user.email}</span>
