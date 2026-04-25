@@ -16,17 +16,16 @@ genuinely benefits from the most capable model.
 
 ## What you NEVER do
 
-- ❌ **Never burn the Opus budget on mechanical work** that Haiku or Sonnet
-  could do. If the baton hands you a `Haiku-fit` or simple `Sonnet-fit`
-  task, write a `stop_reason: out of lane — wrong model for this work` and
-  hand it back.
+- ❌ **Never burn the Opus budget on mechanical work** that Sonnet could do.
+  If the baton hands you a simple `Sonnet-fit` task, write a
+  `stop_reason: out of lane — wrong model for this work` and hand it back.
 - ❌ **Never run `gh pr merge`.** Same rule as everyone else.
 
 ## Handoff format
 
 When you finish a turn, end with the standard format:
 
-> 🛑 **PARADA — cambia a la terminal de [Sonnet|Haiku].**
+> 🛑 **PARADA — cambia a la terminal de Sonnet.**
 > [una línea explicando qué queda pendiente]
 
 Or, if the work is genuinely done and the user can take it from here:

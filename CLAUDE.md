@@ -23,10 +23,9 @@ Do these at the top of every session — in order, before writing any code:
    terminal/model. Follow the protocol in the file (verify git state,
    re-Read `dirty:` paths, then act on `next:`). If absent, no handoff in
    flight.
-4. **Read your lane file** at `.claude/lanes/<your-model>.md` (`haiku.md`,
-   `sonnet.md`, or `opus.md`). It defines what you may and may not do this
-   session. Lane discipline is the contract — read it every time, not from
-   memory.
+4. **Read your lane file** at `.claude/lanes/<your-model>.md` (`sonnet.md`
+   or `opus.md`). It defines what you may and may not do this session. Lane
+   discipline is the contract — read it every time, not from memory.
 5. **Run `git status`** — confirm the branch state and any uncommitted work.
 6. **Read the relevant Next.js 16 guide** from
    `node_modules/next/dist/docs/01-app/` before writing any framework code.
@@ -40,41 +39,41 @@ The fix took an extra PR round. Read first, then code.
 
 ## Multi-terminal workflow (Apr 2026)
 
-Three Cursor terminals open, one per model. Only one is active at a time.
-Hand off via `.private/baton.md` (gitignored) — protocol lives in that file.
-Each model reads its lane file (`.claude/lanes/<model>.md`) at session start;
-lane files define **what each model may and may not do**.
+Two Cursor terminals open, one per model: **Sonnet** (default) and **Opus**
+(architecture/hard problems). Only one is active at a time. Hand off via
+`.private/baton.md` (gitignored) — protocol lives in that file. Each model
+reads its lane file (`.claude/lanes/<model>.md`) at session start; lane files
+define **what each model may and may not do**.
 
-Why three terminals: avoids the per-model cache miss that `/model` triggers,
+Why two terminals: avoids the per-model cache miss that `/model` triggers,
 at the cost of re-syncing file/git state on each pickup (encoded by baton).
 
 ### Lane summary
 
-| Model      | Does                                            | Never does                                |
-| ---------- | ----------------------------------------------- | ----------------------------------------- |
-| **Haiku**  | open small mechanical PRs, post-merge cleanup   | run `pr-reviewer`, claim "ready to merge" |
-| **Sonnet** | feature work, run `pr-reviewer` and apply fixes | run `gh pr merge`, take Opus-worth tasks  |
-| **Opus**   | architecture, hard debugging, process design    | mechanical work, run `gh pr merge`        |
+| Model      | Does                                                               | Never does                               |
+| ---------- | ------------------------------------------------------------------ | ---------------------------------------- |
+| **Sonnet** | feature work, full PR lifecycle, `pr-reviewer`, post-merge cleanup | run `gh pr merge`, take Opus-worth tasks |
+| **Opus**   | architecture, hard debugging, process design                       | mechanical work, run `gh pr merge`       |
 
-### The standard handoff cycle (small Haiku PR)
+### The standard handoff cycle
 
 ```
-Haiku → opens PR, waits for CI green → 🛑 STOP, hands off to Sonnet
-Sonnet → runs pr-reviewer, fixes, loops to PASS → ✅ STOP, hands off to user
-User → squash-merges in GitHub UI → switches to Haiku terminal
-Haiku → git pull, deletes local branch → 🧹 cleanup done
+Sonnet → codes, opens PR, waits for CI green
+       → runs pr-reviewer, fixes, loops to PASS
+       → 🛑 hands off to user for merge
+User   → squash-merges in GitHub UI → back to Sonnet terminal
+Sonnet → git checkout main && git pull && git branch -d <branch>
+       → ✅ LISTO
 ```
 
 Each STOP is a hard stop: the model updates `baton.md` (with `to:`,
 `next:`, and `stop_reason:`) and ends its turn with one of these messages
 so the user sees the handoff at a glance:
 
-- `🛑 PARADA — cambia a la terminal de <Sonnet|Haiku|Opus>.` — work
-  remains, in a different lane.
-- `✅ LISTO — <one-line summary>.` — the model finished what it could; the
-  user acts next (typically: merge).
-- `🧹 CLEANUP DONE — <one-line summary>.` — Haiku-only, after post-merge
-  sync.
+- `🛑 PARADA — cambia a la terminal de <Sonnet|Opus>.` — work remains,
+  in a different lane.
+- `✅ LISTO — <one-line summary>.` — the model finished; user acts next
+  (typically: merge) or the cycle is complete.
 
 Never end a turn that needs a handoff with prose narration alone — the
 emoji line is the signal that tells the user which terminal to open next.
