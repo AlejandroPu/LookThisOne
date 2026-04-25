@@ -58,6 +58,43 @@ export async function changePassword(
   return { success: 'Password updated.' };
 }
 
+// --- Change username ---
+
+export async function changeUsername(
+  _prev: SettingsActionState,
+  formData: FormData,
+): Promise<SettingsActionState> {
+  const { page } = await requirePage();
+
+  const username = String(formData.get('username') ?? '')
+    .trim()
+    .toLowerCase();
+
+  if (!username) return { error: 'Username is required.' };
+  if (username === page.username)
+    return { error: 'That is already your username.' };
+  if (
+    !/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/.test(username) ||
+    username.length < 3 ||
+    username.length > 30
+  )
+    return {
+      error:
+        'Username must be 3–30 characters: lowercase letters, numbers, and hyphens only. Cannot start or end with a hyphen.',
+    };
+
+  const taken = await prisma.page.findUnique({ where: { username } });
+  if (taken) return { error: 'That username is already taken.' };
+
+  await prisma.page.update({ where: { id: page.id }, data: { username } });
+
+  revalidatePath(`/${page.username}`);
+  revalidatePath(`/${username}`);
+  revalidatePath('/dashboard');
+
+  return { success: `Username changed to "${username}".` };
+}
+
 // --- Delete account ---
 
 export async function deleteAccount(
