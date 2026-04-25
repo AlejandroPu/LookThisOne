@@ -175,6 +175,6 @@ See [`CLAUDE.md`](./CLAUDE.md) for the full contributor guide (also read by AI a
 
 ## License
 
-Source-available for learning and review. Not licensed for production use, redistribution, or commercial derivatives.
+Source-available — permitted for inspection, study, and research only. See [LICENSE](./LICENSE) for full terms.
 
-© Alejandro Pu. All rights reserved.
+© 2026 Alejandro Retamal. All rights reserved.
