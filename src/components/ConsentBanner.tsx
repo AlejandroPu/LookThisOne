@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -21,6 +21,11 @@ export function ConsentBanner() {
     if (typeof document === 'undefined') return false;
     return readConsent() === null;
   });
+  const firstButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (visible) firstButtonRef.current?.focus();
+  }, [visible]);
 
   if (PRIVATE_PREFIXES.some((p) => pathname.startsWith(p))) return null;
   if (!visible) return null;
@@ -33,6 +38,7 @@ export function ConsentBanner() {
   return (
     <div
       role="dialog"
+      aria-modal="true"
       aria-label="Cookie consent"
       className="fixed inset-x-0 bottom-0 z-50 border-t border-gray-200 bg-white shadow-md"
     >
@@ -47,6 +53,7 @@ export function ConsentBanner() {
         </p>
         <div className="flex shrink-0 gap-3">
           <button
+            ref={firstButtonRef}
             onClick={() => handleChoice('denied')}
             className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >

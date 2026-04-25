@@ -3,6 +3,7 @@
 import { cache } from 'react';
 import { cookies } from 'next/headers';
 
+// Re-exported so callers only need to import from this module.
 export { COOKIE_NAME, COOKIE_MAX_AGE_SECONDS } from './constants';
 import { COOKIE_NAME } from './constants';
 
