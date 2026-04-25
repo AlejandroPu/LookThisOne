@@ -1,16 +1,18 @@
-# Sonnet lane — feature work and review
+# Sonnet lane — feature work and full PR lifecycle
 
 You are running in the **Sonnet terminal**. This is the default lane —
-most non-trivial feature work and all `pr-reviewer` runs happen here.
+all non-Opus-worth work happens here, from first commit to post-merge cleanup.
 
 ## What you DO
 
-- Pick up `Sonnet-fit` tasks from `.private/backlog.md` "Next up" — feature
-  flows, multi-file changes, anything requiring real judgment about API
-  shape or data flow.
-- Run **`pr-reviewer`** on PRs Haiku opened. Apply fixes on the same branch,
-  push, wait for CI, re-invoke. Loop until verdict is `PASS`.
-- Hand off to the user for squash-merge once `pr-reviewer` returns `PASS`.
+- Pick up tasks from `.private/backlog.md` "Next up" that are not `Opus-worth`
+  — feature flows, multi-file changes, small mechanical edits, anything
+  requiring real judgment about API shape or data flow.
+- Own the **full PR lifecycle**: code → commit → open PR → wait for CI green →
+  run `pr-reviewer` (loop until PASS) → hand off to user for merge → after
+  merge, do cleanup yourself (`git checkout main && git pull && git branch -d <branch>`).
+- End every turn that needs a handoff with one of the standard emoji lines
+  (see below).
 
 ## What you NEVER do
 
@@ -22,30 +24,25 @@ most non-trivial feature work and all `pr-reviewer` runs happen here.
 - ❌ **Never skip `pr-reviewer`** on a non-docs PR, even if the diff "looks
   obviously fine".
 
-## Picking up Haiku's work (review flow)
+## Standard feature flow
 
-When baton points you here for review:
-
-1. `git fetch && git checkout <branch>` (the PR branch Haiku opened).
-2. Invoke `pr-reviewer` subagent with the PR number.
-3. If `CHANGES REQUESTED` or `BLOCK`: apply fixes, commit, push, wait for
-   CI, re-invoke `pr-reviewer`. Loop.
-4. When `PASS`: update baton with:
-   - `to: user`
-   - `next: squash-merge PR #N en la UI de GitHub, luego HANDOFF a Haiku
-para cleanup`
-   - `stop_reason: pr-reviewer PASS — merge is the user's call`
-5. End your turn with:
+1. `git checkout main && git pull`
+2. `git checkout -b <type>/<kebab-name>`
+3. Write code, commit.
+4. `git push -u origin <branch>` → `gh pr create`
+5. Wait for CI green.
+6. Run `pr-reviewer`. If `CHANGES REQUESTED` / `BLOCK`: fix, commit, push,
+   wait for CI, re-invoke. Loop until `PASS`.
+7. Update baton (`to: user`, `stop_reason: pr-reviewer PASS — merge is the user's call`).
+8. End turn with:
 
    > ✅ **PR #N listo para squash-merge.**
    > `pr-reviewer` verdict: PASS. Merge desde la UI de GitHub.
-   > Después vuelve a la terminal de **Haiku** para el cleanup.
 
-## Picking up a feature task
+9. After the user merges: `git checkout main && git pull && git branch -d <branch>`.
+   Update baton to clean state. End turn with:
 
-For `Sonnet-fit` features: standard PR flow. Open the PR, wait for CI green,
-then run `pr-reviewer` yourself (you don't need to hand off — you're already
-in the right lane). Loop until PASS, then hand off to user as above.
+   > ✅ **LISTO — main sincronizado, rama local borrada.**
 
 ## Escalating to Opus mid-task
 
