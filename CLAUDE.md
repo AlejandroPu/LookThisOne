@@ -19,14 +19,30 @@ Do these at the top of every session — in order, before writing any code:
    PRs, or README.
 2. **Read `.private/backlog.md`** — recover the current cycle, its sub-tasks,
    and the "Next up" queue.
-3. **Run `git status`** — confirm the branch state and any uncommitted work.
-4. **Read the relevant Next.js 16 guide** from
+3. **Read `.private/baton.md` if it exists** — handoff notes from another
+   terminal/model. Follow the protocol in the file (verify git state,
+   re-Read `dirty:` paths, then act on `next:`). If absent, no handoff in
+   flight.
+4. **Run `git status`** — confirm the branch state and any uncommitted work.
+5. **Read the relevant Next.js 16 guide** from
    `node_modules/next/dist/docs/01-app/` before writing any framework code.
    APIs, conventions and file structure may differ from training data.
 
-Skipping step 4 caused a real incident: writing layout-based auth gates that
+Skipping step 5 caused a real incident: writing layout-based auth gates that
 silently failed because layouts render in parallel with their pages in Next 16.
 The fix took an extra PR round. Read first, then code.
+
+---
+
+## Multi-terminal workflow (testing — Apr 2026)
+
+Three Cursor terminals open, one per model: **Haiku** (commits, PRs,
+mechanical edits), **Sonnet** (default — feature work), **Opus** (architecture,
+hard debugging). Only one terminal active at a time. Hand off via
+`.private/baton.md` (gitignored) — protocol lives in that file.
+
+Avoids the per-model cache miss of `/model` switching, at the cost of
+re-syncing file/git state on each pickup (which `baton.md` encodes).
 
 ---
 
