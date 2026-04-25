@@ -3,8 +3,8 @@
 import { cache } from 'react';
 import { cookies } from 'next/headers';
 
-export const COOKIE_NAME = 'lto_consent';
-export const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365; // 12 months
+export { COOKIE_NAME, COOKIE_MAX_AGE_SECONDS } from './constants';
+import { COOKIE_NAME } from './constants';
 
 export const hasConsent = cache(async (): Promise<boolean> => {
   const store = await cookies();

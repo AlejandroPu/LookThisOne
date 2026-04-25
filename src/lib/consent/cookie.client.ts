@@ -1,4 +1,4 @@
-import { COOKIE_NAME, COOKIE_MAX_AGE_SECONDS } from './cookie';
+import { COOKIE_NAME, COOKIE_MAX_AGE_SECONDS } from './constants';
 
 export function setConsent(value: 'granted' | 'denied'): void {
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
