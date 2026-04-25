@@ -37,14 +37,22 @@ export default async function DashboardPage() {
             Signed in as <span className="font-mono">{user.email}</span>
           </p>
         </div>
-        <form action="/auth/signout" method="post">
-          <button
-            type="submit"
+        <div className="flex items-center gap-2">
+          <Link
+            href="/dashboard/settings"
             className="rounded border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50"
           >
-            Sign out
-          </button>
-        </form>
+            Settings
+          </Link>
+          <form action="/auth/signout" method="post">
+            <button
+              type="submit"
+              className="rounded border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50"
+            >
+              Sign out
+            </button>
+          </form>
+        </div>
       </header>
 
       <section className="mt-8 space-y-4 rounded border border-gray-200 p-6">
