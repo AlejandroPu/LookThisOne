@@ -1,3 +1,5 @@
+import { getTranslations } from 'next-intl/server';
+
 import { redirectIfOnboarded } from '@/lib/auth/dal';
 
 import { createInitialWorkspace } from './actions';
@@ -18,15 +20,16 @@ export default async function OnboardingPage({
   await redirectIfOnboarded();
 
   const { error } = await searchParams;
+  const t = await getTranslations('Onboarding');
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center gap-6 px-6 py-12">
       <header className="space-y-2">
-        <h1 className="text-2xl font-semibold">Pick your username</h1>
+        <h1 className="text-2xl font-semibold">{t('title')}</h1>
         <p className="text-sm text-gray-600">
-          This becomes your public link:{' '}
-          <span className="font-mono">lookthis.one/your-username</span>. You can
-          change it later from settings.
+          {t('descriptionBefore')}{' '}
+          <span className="font-mono">lookthis.one/your-username</span>
+          {t('descriptionAfter')}
         </p>
       </header>
 
@@ -41,7 +44,7 @@ export default async function OnboardingPage({
 
       <form action={createInitialWorkspace} className="flex flex-col gap-3">
         <label className="flex flex-col gap-1 text-sm">
-          Username
+          {t('usernameLabel')}
           <input
             type="text"
             name="username"
@@ -53,18 +56,15 @@ export default async function OnboardingPage({
             minLength={3}
             maxLength={20}
             className="rounded border border-gray-300 px-3 py-2 font-mono"
-            placeholder="yourname"
+            placeholder={t('usernamePlaceholder')}
           />
-          <span className="text-xs text-gray-500">
-            3–20 chars. Lowercase letters, digits, underscore or hyphen. Input
-            is normalised to lowercase before saving.
-          </span>
+          <span className="text-xs text-gray-500">{t('usernameHint')}</span>
         </label>
         <button
           type="submit"
           className="rounded bg-black px-3 py-2 text-sm font-medium text-white hover:bg-gray-800"
         >
-          Continue
+          {t('submit')}
         </button>
       </form>
     </main>

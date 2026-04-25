@@ -1,0 +1,146 @@
+{
+  "Nav": {
+    "ariaLabel": "Main",
+    "homeAriaLabel": "LookThisOne — home",
+    "features": "Features",
+    "getStarted": "Get started"
+  },
+  "Home": {
+    "learnMore": "Learn more",
+    "copyright": "© {year} LookThisOne. All rights reserved."
+  },
+  "Login": {
+    "title": "Sign in",
+    "newHere": "New here?",
+    "createAccount": "Create an account",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "or": "or",
+    "continueWithGoogle": "Continue with Google"
+  },
+  "Signup": {
+    "title": "Create an account",
+    "alreadyHaveOne": "Already have one?",
+    "signIn": "Sign in",
+    "betaTitle": "Beta preview.",
+    "betaBody": "LookThisOne is under active development. Accounts created during the beta may be reset when the stable version launches.",
+    "email": "Email",
+    "password": "Password",
+    "passwordHint": "At least 8 characters.",
+    "submit": "Create account",
+    "or": "or",
+    "continueWithGoogle": "Continue with Google",
+    "checkInbox": "Check your inbox to confirm your email address."
+  },
+  "Onboarding": {
+    "title": "Pick your username",
+    "descriptionBefore": "This becomes your public link:",
+    "descriptionAfter": ". You can change it later from settings.",
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "yourname",
+    "usernameHint": "3–20 chars. Lowercase letters, digits, underscore or hyphen. Input is normalised to lowercase before saving.",
+    "submit": "Continue"
+  },
+  "Dashboard": {
+    "title": "Dashboard",
+    "signedInAs": "Signed in as",
+    "settings": "Settings",
+    "signOut": "Sign out",
+    "yourPage": "Your page",
+    "published": "Published",
+    "draft": "Draft",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "viewPublicPage": "View public page ↗",
+    "publishHint": "Publish to make your page reachable at the URL above."
+  },
+  "Links": {
+    "heading": "Links",
+    "empty": "No links yet. Add one below.",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "addHeading": "Add a link",
+    "titlePlaceholder": "Title (e.g. My Portfolio)",
+    "addLink": "Add link",
+    "adding": "Adding…",
+    "reorderAriaLabel": "Reorder {title}",
+    "disableLink": "Disable link",
+    "enableLink": "Enable link",
+    "editTitlePlaceholder": "Title"
+  },
+  "Profile": {
+    "heading": "Profile",
+    "changePhoto": "Change photo",
+    "photoHint": "Any image · max 2 MB",
+    "displayName": "Display name",
+    "bio": "Bio",
+    "bioPlaceholder": "A short description about you…",
+    "save": "Save profile",
+    "saving": "Saving…",
+    "saved": "Profile saved.",
+    "avatarAlt": "Avatar preview"
+  },
+  "Theme": {
+    "heading": "Theme",
+    "previewAriaLabel": "Theme preview",
+    "yourLinkHere": "Your link here",
+    "avatarAlt": "Avatar"
+  },
+  "Settings": {
+    "title": "Account settings",
+    "signedInAs": "Signed in as",
+    "backToDashboard": "Back to dashboard",
+    "username": {
+      "heading": "Username",
+      "publicUrlBefore": "Your public URL is",
+      "newUsernameLabel": "New username",
+      "changeUsername": "Change username",
+      "confirmWarningBefore": "⚠️ Your public URL will change from",
+      "confirmWarningMiddle": "to",
+      "confirmWarningAfter": ". All existing links pointing to your current URL will break.",
+      "confirmChange": "Confirm change",
+      "saving": "Saving…",
+      "cancel": "Cancel"
+    },
+    "email": {
+      "heading": "Email address",
+      "newEmailLabel": "New email",
+      "submit": "Change email",
+      "sending": "Sending…"
+    },
+    "password": {
+      "heading": "Password",
+      "newPasswordLabel": "New password",
+      "confirmLabel": "Confirm new password",
+      "submit": "Change password",
+      "saving": "Saving…",
+      "minCharsPlaceholder": "Min. 8 characters",
+      "repeatPlaceholder": "Repeat password",
+      "googleSignIn": "Your account uses Google sign-in — no password to change."
+    },
+    "delete": {
+      "heading": "Delete account",
+      "description": "This permanently deletes your profile, all links, and all analytics data. This action cannot be undone.",
+      "confirmLabelBefore": "Type",
+      "confirmLabelAfter": "to confirm",
+      "submit": "Delete my account",
+      "deleting": "Deleting…"
+    }
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "This link doesn't exist or has been removed.",
+    "goHome": "Go home"
+  },
+  "Consent": {
+    "ariaLabel": "Cookie consent",
+    "message": "We use cookies to measure anonymous page views. You can accept or reject — your choice is remembered for 12 months.",
+    "privacyPolicy": "Privacy policy",
+    "reject": "Reject",
+    "accept": "Accept"
+  }
+}

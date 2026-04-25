@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useActionState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { changeUsername, type SettingsActionState } from './actions';
 
 export function UsernameForm({ currentUsername }: { currentUsername: string }) {
+  const t = useTranslations('Settings');
   const [state, formAction, pending] = useActionState(
     changeUsername,
     null as SettingsActionState,
@@ -24,9 +26,11 @@ export function UsernameForm({ currentUsername }: { currentUsername: string }) {
 
   return (
     <section className="mt-8 space-y-4 rounded border border-gray-200 p-6">
-      <h2 className="text-sm font-medium text-gray-500">Username</h2>
+      <h2 className="text-sm font-medium text-gray-500">
+        {t('username.heading')}
+      </h2>
       <p className="text-xs text-gray-500">
-        Your public URL is{' '}
+        {t('username.publicUrlBefore')}{' '}
         <span className="font-mono font-medium text-gray-800">
           lookthis.one/{currentUsername}
         </span>
@@ -50,7 +54,7 @@ export function UsernameForm({ currentUsername }: { currentUsername: string }) {
               htmlFor="settings-username"
               className="mb-1 block text-xs font-medium text-gray-500"
             >
-              New username
+              {t('username.newUsernameLabel')}
             </label>
             <input
               id="settings-username"
@@ -71,7 +75,7 @@ export function UsernameForm({ currentUsername }: { currentUsername: string }) {
             }
             className="rounded bg-black px-3 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
           >
-            Change username
+            {t('username.changeUsername')}
           </button>
         </div>
       ) : (
@@ -82,15 +86,15 @@ export function UsernameForm({ currentUsername }: { currentUsername: string }) {
             value={draft.trim().toLowerCase()}
           />
           <p className="rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            ⚠️ Your public URL will change from{' '}
+            {t('username.confirmWarningBefore')}{' '}
             <span className="font-mono font-semibold">
               lookthis.one/{currentUsername}
             </span>{' '}
-            to{' '}
+            {t('username.confirmWarningMiddle')}{' '}
             <span className="font-mono font-semibold">
               lookthis.one/{draft.trim().toLowerCase()}
             </span>
-            . All existing links pointing to your current URL will break.
+            {t('username.confirmWarningAfter')}
           </p>
           <div className="flex gap-3">
             <button
@@ -98,7 +102,7 @@ export function UsernameForm({ currentUsername }: { currentUsername: string }) {
               disabled={pending}
               className="rounded bg-black px-3 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
             >
-              {pending ? 'Saving…' : 'Confirm change'}
+              {pending ? t('username.saving') : t('username.confirmChange')}
             </button>
             <button
               type="button"
@@ -106,7 +110,7 @@ export function UsernameForm({ currentUsername }: { currentUsername: string }) {
               disabled={pending}
               className="rounded border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
             >
-              Cancel
+              {t('username.cancel')}
             </button>
           </div>
         </form>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState, useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { updateProfile, type ProfileActionState } from './actions';
 
@@ -17,6 +18,7 @@ export function ProfileEditor({
   avatarUrl,
   username,
 }: ProfileEditorProps) {
+  const t = useTranslations('Profile');
   const [state, formAction, pending] = useActionState(
     updateProfile,
     null as ProfileActionState,
@@ -44,7 +46,7 @@ export function ProfileEditor({
 
   return (
     <section className="mt-8 space-y-6 rounded border border-gray-200 p-6">
-      <h2 className="text-sm font-medium text-gray-500">Profile</h2>
+      <h2 className="text-sm font-medium text-gray-500">{t('heading')}</h2>
 
       <form action={formAction} className="space-y-5">
         {state?.error ? (
@@ -53,7 +55,7 @@ export function ProfileEditor({
           </p>
         ) : state?.success ? (
           <p role="status" className="text-xs text-green-600">
-            Profile saved.
+            {t('saved')}
           </p>
         ) : null}
 
@@ -63,7 +65,7 @@ export function ProfileEditor({
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={previewUrl}
-              alt="Avatar preview"
+              alt={t('avatarAlt')}
               className="h-16 w-16 rounded-full object-cover"
             />
           ) : (
@@ -77,9 +79,9 @@ export function ProfileEditor({
               onClick={() => fileInputRef.current?.click()}
               className="rounded border border-gray-300 px-3 py-1.5 text-xs font-medium hover:bg-gray-50"
             >
-              Change photo
+              {t('changePhoto')}
             </button>
-            <p className="mt-1 text-xs text-gray-400">Any image · max 2 MB</p>
+            <p className="mt-1 text-xs text-gray-400">{t('photoHint')}</p>
           </div>
           {/* aria-hidden: the visible button above is the labeled control */}
           <input
@@ -99,7 +101,7 @@ export function ProfileEditor({
             htmlFor="profile-title"
             className="mb-1 block text-xs font-medium text-gray-500"
           >
-            Display name
+            {t('displayName')}
           </label>
           <input
             id="profile-title"
@@ -118,7 +120,7 @@ export function ProfileEditor({
             htmlFor="profile-bio"
             className="mb-1 block text-xs font-medium text-gray-500"
           >
-            Bio
+            {t('bio')}
           </label>
           <textarea
             id="profile-bio"
@@ -126,7 +128,7 @@ export function ProfileEditor({
             defaultValue={bio ?? ''}
             maxLength={300}
             rows={3}
-            placeholder="A short description about you…"
+            placeholder={t('bioPlaceholder')}
             className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
           />
         </div>
@@ -136,7 +138,7 @@ export function ProfileEditor({
           disabled={pending}
           className="rounded bg-black px-3 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
         >
-          {pending ? 'Saving…' : 'Save profile'}
+          {pending ? t('saving') : t('save')}
         </button>
       </form>
     </section>

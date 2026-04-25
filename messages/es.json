@@ -1,0 +1,146 @@
+{
+  "Nav": {
+    "ariaLabel": "Principal",
+    "homeAriaLabel": "LookThisOne — inicio",
+    "features": "Características",
+    "getStarted": "Empezar"
+  },
+  "Home": {
+    "learnMore": "Saber más",
+    "copyright": "© {year} LookThisOne. Todos los derechos reservados."
+  },
+  "Login": {
+    "title": "Iniciar sesión",
+    "newHere": "¿Eres nuevo?",
+    "createAccount": "Crea una cuenta",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "submit": "Iniciar sesión",
+    "or": "o",
+    "continueWithGoogle": "Continuar con Google"
+  },
+  "Signup": {
+    "title": "Crear una cuenta",
+    "alreadyHaveOne": "¿Ya tienes una?",
+    "signIn": "Inicia sesión",
+    "betaTitle": "Versión beta.",
+    "betaBody": "LookThisOne está en desarrollo activo. Las cuentas creadas durante la beta pueden reiniciarse cuando se lance la versión estable.",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "passwordHint": "Mínimo 8 caracteres.",
+    "submit": "Crear cuenta",
+    "or": "o",
+    "continueWithGoogle": "Continuar con Google",
+    "checkInbox": "Revisa tu bandeja de entrada para confirmar tu dirección de correo."
+  },
+  "Onboarding": {
+    "title": "Elige tu nombre de usuario",
+    "descriptionBefore": "Este será tu enlace público:",
+    "descriptionAfter": ". Puedes cambiarlo más adelante desde ajustes.",
+    "usernameLabel": "Nombre de usuario",
+    "usernamePlaceholder": "tunombre",
+    "usernameHint": "3–20 caracteres. Letras minúsculas, dígitos, guion bajo o guion. Se normaliza a minúsculas al guardar.",
+    "submit": "Continuar"
+  },
+  "Dashboard": {
+    "title": "Panel",
+    "signedInAs": "Sesión iniciada como",
+    "settings": "Ajustes",
+    "signOut": "Cerrar sesión",
+    "yourPage": "Tu página",
+    "published": "Publicado",
+    "draft": "Borrador",
+    "publish": "Publicar",
+    "unpublish": "Despublicar",
+    "viewPublicPage": "Ver página pública ↗",
+    "publishHint": "Publica para que tu página sea accesible en la URL de arriba."
+  },
+  "Links": {
+    "heading": "Enlaces",
+    "empty": "Aún no hay enlaces. Añade uno abajo.",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "cancel": "Cancelar",
+    "addHeading": "Añadir un enlace",
+    "titlePlaceholder": "Título (ej. Mi Portfolio)",
+    "addLink": "Añadir enlace",
+    "adding": "Añadiendo…",
+    "reorderAriaLabel": "Reordenar {title}",
+    "disableLink": "Desactivar enlace",
+    "enableLink": "Activar enlace",
+    "editTitlePlaceholder": "Título"
+  },
+  "Profile": {
+    "heading": "Perfil",
+    "changePhoto": "Cambiar foto",
+    "photoHint": "Cualquier imagen · máx. 2 MB",
+    "displayName": "Nombre visible",
+    "bio": "Biografía",
+    "bioPlaceholder": "Una breve descripción sobre ti…",
+    "save": "Guardar perfil",
+    "saving": "Guardando…",
+    "saved": "Perfil guardado.",
+    "avatarAlt": "Vista previa del avatar"
+  },
+  "Theme": {
+    "heading": "Tema",
+    "previewAriaLabel": "Vista previa del tema",
+    "yourLinkHere": "Tu enlace aquí",
+    "avatarAlt": "Avatar"
+  },
+  "Settings": {
+    "title": "Configuración de cuenta",
+    "signedInAs": "Sesión iniciada como",
+    "backToDashboard": "Volver al panel",
+    "username": {
+      "heading": "Nombre de usuario",
+      "publicUrlBefore": "Tu URL pública es",
+      "newUsernameLabel": "Nuevo nombre de usuario",
+      "changeUsername": "Cambiar nombre de usuario",
+      "confirmWarningBefore": "⚠️ Tu URL pública cambiará de",
+      "confirmWarningMiddle": "a",
+      "confirmWarningAfter": ". Todos los enlaces existentes que apunten a tu URL actual dejarán de funcionar.",
+      "confirmChange": "Confirmar cambio",
+      "saving": "Guardando…",
+      "cancel": "Cancelar"
+    },
+    "email": {
+      "heading": "Dirección de correo",
+      "newEmailLabel": "Nuevo correo",
+      "submit": "Cambiar correo",
+      "sending": "Enviando…"
+    },
+    "password": {
+      "heading": "Contraseña",
+      "newPasswordLabel": "Nueva contraseña",
+      "confirmLabel": "Confirmar nueva contraseña",
+      "submit": "Cambiar contraseña",
+      "saving": "Guardando…",
+      "minCharsPlaceholder": "Mín. 8 caracteres",
+      "repeatPlaceholder": "Repite la contraseña",
+      "googleSignIn": "Tu cuenta usa Google para iniciar sesión — no hay contraseña que cambiar."
+    },
+    "delete": {
+      "heading": "Eliminar cuenta",
+      "description": "Esto elimina permanentemente tu perfil, todos los enlaces y todos los datos de analíticas. Esta acción no se puede deshacer.",
+      "confirmLabelBefore": "Escribe",
+      "confirmLabelAfter": "para confirmar",
+      "submit": "Eliminar mi cuenta",
+      "deleting": "Eliminando…"
+    }
+  },
+  "NotFound": {
+    "title": "Página no encontrada",
+    "description": "Este enlace no existe o ha sido eliminado.",
+    "goHome": "Ir al inicio"
+  },
+  "Consent": {
+    "ariaLabel": "Consentimiento de cookies",
+    "message": "Usamos cookies para medir visitas anónimas. Puedes aceptar o rechazar — tu elección se recuerda durante 12 meses.",
+    "privacyPolicy": "Política de privacidad",
+    "reject": "Rechazar",
+    "accept": "Aceptar"
+  }
+}

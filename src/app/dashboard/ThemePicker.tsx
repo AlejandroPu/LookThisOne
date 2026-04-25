@@ -1,6 +1,7 @@
 'use client';
 
 import { useOptimistic, useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { setTheme } from './actions';
 
@@ -27,6 +28,7 @@ type Props = {
 };
 
 export function ThemePicker({ themes, currentThemeId, page }: Props) {
+  const t = useTranslations('Theme');
   const [optimisticThemeId, setOptimisticThemeId] =
     useOptimistic(currentThemeId);
   const [, startTransition] = useTransition();
@@ -47,7 +49,7 @@ export function ThemePicker({ themes, currentThemeId, page }: Props) {
 
   return (
     <section className="mt-8 space-y-6 rounded border border-gray-200 p-6">
-      <h2 className="text-sm font-medium text-gray-500">Theme</h2>
+      <h2 className="text-sm font-medium text-gray-500">{t('heading')}</h2>
 
       {/* Swatches */}
       <div className="flex flex-wrap gap-3">
@@ -80,14 +82,14 @@ export function ThemePicker({ themes, currentThemeId, page }: Props) {
       <div
         className="overflow-hidden rounded-xl"
         style={{ backgroundColor: bg, color: fg }}
-        aria-label="Theme preview"
+        aria-label={t('previewAriaLabel')}
       >
         <div className="flex flex-col items-center px-4 py-8">
           {page.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={page.avatarUrl}
-              alt="Avatar"
+              alt={t('avatarAlt')}
               className="mb-3 h-14 w-14 rounded-full object-cover"
             />
           ) : (
@@ -118,7 +120,7 @@ export function ThemePicker({ themes, currentThemeId, page }: Props) {
                 className="w-full rounded-lg border py-2.5 text-center text-sm opacity-40"
                 style={{ borderColor: accent }}
               >
-                Your link here
+                {t('yourLinkHere')}
               </li>
             )}
           </ul>

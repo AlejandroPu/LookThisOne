@@ -1,10 +1,12 @@
 'use client';
 
 import { useActionState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { changeEmail, type SettingsActionState } from './actions';
 
 export function EmailForm({ currentEmail }: { currentEmail: string }) {
+  const t = useTranslations('Settings');
   const [state, formAction, pending] = useActionState(
     changeEmail,
     null as SettingsActionState,
@@ -12,7 +14,9 @@ export function EmailForm({ currentEmail }: { currentEmail: string }) {
 
   return (
     <section className="mt-8 space-y-4 rounded border border-gray-200 p-6">
-      <h2 className="text-sm font-medium text-gray-500">Email address</h2>
+      <h2 className="text-sm font-medium text-gray-500">
+        {t('email.heading')}
+      </h2>
 
       <form action={formAction} className="space-y-4">
         {state?.error && (
@@ -31,7 +35,7 @@ export function EmailForm({ currentEmail }: { currentEmail: string }) {
             htmlFor="settings-email"
             className="mb-1 block text-xs font-medium text-gray-500"
           >
-            New email
+            {t('email.newEmailLabel')}
           </label>
           <input
             id="settings-email"
@@ -48,7 +52,7 @@ export function EmailForm({ currentEmail }: { currentEmail: string }) {
           disabled={pending}
           className="rounded bg-black px-3 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
         >
-          {pending ? 'Sending…' : 'Change email'}
+          {pending ? t('email.sending') : t('email.submit')}
         </button>
       </form>
     </section>

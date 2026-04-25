@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 
 import { signInWithGoogle } from '@/app/login/actions';
 
@@ -17,15 +18,16 @@ export default async function SignupPage({
 }) {
   const { error, state } = await searchParams;
   const checkEmail = state === 'check_email';
+  const t = await getTranslations('Signup');
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-6 px-6 py-12">
       <header className="space-y-2">
-        <h1 className="text-2xl font-semibold">Create an account</h1>
+        <h1 className="text-2xl font-semibold">{t('title')}</h1>
         <p className="text-sm text-gray-600">
-          Already have one?{' '}
+          {t('alreadyHaveOne')}{' '}
           <Link className="underline" href="/login">
-            Sign in
+            {t('signIn')}
           </Link>
           .
         </p>
@@ -35,9 +37,8 @@ export default async function SignupPage({
         role="note"
         className="rounded border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-900"
       >
-        <strong className="font-semibold">Beta preview.</strong> LookThisOne is
-        under active development. Accounts created during the beta may be reset
-        when the stable version launches.
+        <strong className="font-semibold">{t('betaTitle')}</strong>{' '}
+        {t('betaBody')}
       </aside>
 
       {error ? (
@@ -54,13 +55,13 @@ export default async function SignupPage({
           role="status"
           className="rounded border border-green-300 bg-green-50 px-3 py-2 text-sm text-green-800"
         >
-          Check your inbox to confirm your email address.
+          {t('checkInbox')}
         </p>
       ) : null}
 
       <form action={signUpWithPassword} className="flex flex-col gap-3">
         <label className="flex flex-col gap-1 text-sm">
-          Email
+          {t('email')}
           <input
             type="email"
             name="email"
@@ -70,7 +71,7 @@ export default async function SignupPage({
           />
         </label>
         <label className="flex flex-col gap-1 text-sm">
-          Password
+          {t('password')}
           <input
             type="password"
             name="password"
@@ -79,19 +80,19 @@ export default async function SignupPage({
             minLength={8}
             className="rounded border border-gray-300 px-3 py-2"
           />
-          <span className="text-xs text-gray-500">At least 8 characters.</span>
+          <span className="text-xs text-gray-500">{t('passwordHint')}</span>
         </label>
         <button
           type="submit"
           className="rounded bg-black px-3 py-2 text-sm font-medium text-white hover:bg-gray-800"
         >
-          Create account
+          {t('submit')}
         </button>
       </form>
 
       <div className="flex items-center gap-3 text-xs text-gray-500">
         <span className="h-px flex-1 bg-gray-200" />
-        or
+        {t('or')}
         <span className="h-px flex-1 bg-gray-200" />
       </div>
 
@@ -100,7 +101,7 @@ export default async function SignupPage({
           type="submit"
           className="w-full rounded border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50"
         >
-          Continue with Google
+          {t('continueWithGoogle')}
         </button>
       </form>
     </main>
