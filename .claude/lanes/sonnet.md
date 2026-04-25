@@ -46,3 +46,22 @@ para cleanup`
 For `Sonnet-fit` features: standard PR flow. Open the PR, wait for CI green,
 then run `pr-reviewer` yourself (you don't need to hand off — you're already
 in the right lane). Loop until PASS, then hand off to user as above.
+
+## Escalating to Opus mid-task
+
+A `Sonnet-fit` task can reveal unexpected complexity once you're inside it.
+If you hit a blocker — a bug that survives two attempts, an architectural
+decision you're not confident about, or cross-cutting concerns you didn't
+anticipate — **stop and escalate rather than forcing through**.
+
+Protocol:
+
+1. Stop where you are. Do not push broken or half-finished code.
+2. Update `.private/baton.md`:
+   - `to: opus`
+   - `next: <one-line description of the blocker>`
+   - `stop_reason: bloqueado — escala a Opus`
+3. End your turn with:
+
+   > 🛑 **PARADA — cambia a la terminal de Opus.**
+   > Bloqueado en: [descripción concisa]. Ver baton para contexto.

@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import { requirePage } from '@/lib/auth/dal';
 
+import { UsernameForm } from './UsernameForm';
 import { EmailForm } from './EmailForm';
 import { PasswordForm } from './PasswordForm';
 import { DeleteForm } from './DeleteForm';
@@ -28,6 +29,8 @@ export default async function SettingsPage() {
       <p className="mt-1 text-sm text-gray-500">
         Signed in as <span className="font-mono">{user.email}</span>
       </p>
+
+      <UsernameForm currentUsername={page.username} />
 
       <EmailForm currentEmail={user.email ?? ''} />
 
