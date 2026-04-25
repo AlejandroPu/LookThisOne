@@ -16,19 +16,19 @@ export default function PrivacyPage() {
           <h2 className="mb-2 font-medium text-gray-900">1. Data we collect</h2>
           <p>
             We collect the email address you use to sign up, the profile
-            information you enter (display name, bio, avatar, links), and basic
-            usage data (page views, link clicks). We do not sell your data.
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            information you enter (display name, bio, avatar, links), and
+            anonymous usage data (page views and link clicks) when you consent
+            to analytics. We do not sell your data.
           </p>
         </section>
 
         <section>
           <h2 className="mb-2 font-medium text-gray-900">2. How we use it</h2>
           <p>
-            Your data is used to operate the service (auth, displaying your
-            public page, analytics you can view in the dashboard) and to
-            communicate service updates with you. Lorem ipsum dolor sit amet,
-            consectetur adipiscing elit.
+            Your data is used to operate the service: authenticating your
+            account, displaying your public page, and showing you analytics in
+            the dashboard. We may use your email address to send service
+            updates. We use it for nothing else.
           </p>
         </section>
 
@@ -39,17 +39,30 @@ export default function PrivacyPage() {
           <p>
             We use Supabase for authentication and file storage, and Vercel for
             hosting. These providers process data on our behalf under their own
-            privacy policies. Lorem ipsum dolor sit amet, consectetur adipiscing
-            elit.
+            privacy policies.
           </p>
         </section>
 
         <section>
           <h2 className="mb-2 font-medium text-gray-900">4. Cookies</h2>
-          <p>
-            We use a session cookie to keep you logged in. No tracking or
-            advertising cookies are set. Lorem ipsum dolor sit amet, consectetur
-            adipiscing elit.
+          <p>We set two types of cookies:</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>
+              <span className="font-medium">Session cookie</span> — keeps you
+              logged in. Set when you sign in and cleared when you sign out.
+              Required for the service to function.
+            </li>
+            <li>
+              <span className="font-medium">Analytics consent cookie</span> (
+              <span className="font-mono text-xs">lto_consent</span>) — records
+              your accept/reject choice for anonymous analytics (page views and
+              link clicks). Lasts 12 months. No analytics data is collected
+              until you accept. You can change your choice by clearing your
+              cookies.
+            </li>
+          </ul>
+          <p className="mt-2">
+            No advertising or third-party tracking cookies are set.
           </p>
         </section>
 
@@ -57,9 +70,9 @@ export default function PrivacyPage() {
           <h2 className="mb-2 font-medium text-gray-900">5. Your rights</h2>
           <p>
             You can delete your account at any time from account settings. This
-            removes your profile and all associated data. You may also request a
-            copy of your data by emailing us. Lorem ipsum dolor sit amet,
-            consectetur adipiscing elit.
+            permanently removes your profile, links, and all associated
+            analytics data. You may also request a copy of your data by emailing
+            us.
           </p>
         </section>
 
@@ -73,7 +86,7 @@ export default function PrivacyPage() {
             >
               hi@lookthis.one
             </a>
-            . Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            .
           </p>
         </section>
       </div>
@@ -82,7 +95,7 @@ export default function PrivacyPage() {
         href="/"
         className="mt-12 inline-block text-sm text-gray-500 hover:text-gray-900"
       >
-        ← Back to home
+        <span aria-hidden="true">←</span> Back to home
       </Link>
     </main>
   );
