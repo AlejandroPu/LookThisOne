@@ -2,6 +2,7 @@ import { after } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 import { prisma } from '@/lib/prisma';
+import { hasConsent } from '@/lib/consent/cookie';
 
 export async function GET(
   request: NextRequest,
@@ -34,8 +35,9 @@ export async function GET(
   // after() runs the insert in the same invocation lifetime but after the
   // response has been sent. A bare fire-and-forget Promise can be cut short
   // when a Vercel function freezes — after() guarantees execution.
-  after(() =>
-    prisma.analyticsEvent
+  after(async () => {
+    if (!(await hasConsent())) return;
+    await prisma.analyticsEvent
       .create({
         data: {
           pageId: link.pageId,
@@ -45,8 +47,8 @@ export async function GET(
           referrer: request.headers.get('referer'),
         },
       })
-      .catch(() => {}),
-  );
+      .catch(() => {});
+  });
 
   return Response.redirect(target.toString());
 }
