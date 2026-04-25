@@ -1,3 +1,4 @@
+import { after } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 import { prisma } from '@/lib/prisma';
@@ -17,18 +18,35 @@ export async function GET(
     return Response.redirect(new URL('/', request.url));
   }
 
-  // Fire-and-forget — don't await so the redirect is instant
-  prisma.analyticsEvent
-    .create({
-      data: {
-        pageId: link.pageId,
-        linkId,
-        type: 'click',
-        userAgent: request.headers.get('user-agent'),
-        referrer: request.headers.get('referer'),
-      },
-    })
-    .catch(() => {});
+  // Defence in depth: validateLink already rejects non-http(s) at write time,
+  // but re-validating here means this route cannot become an open redirect
+  // even if a bad URL ever lands in the DB through another code path.
+  let target: URL;
+  try {
+    target = new URL(link.url);
+  } catch {
+    return Response.redirect(new URL('/', request.url));
+  }
+  if (target.protocol !== 'http:' && target.protocol !== 'https:') {
+    return Response.redirect(new URL('/', request.url));
+  }
 
-  return Response.redirect(link.url);
+  // after() runs the insert in the same invocation lifetime but after the
+  // response has been sent. A bare fire-and-forget Promise can be cut short
+  // when a Vercel function freezes — after() guarantees execution.
+  after(() =>
+    prisma.analyticsEvent
+      .create({
+        data: {
+          pageId: link.pageId,
+          linkId,
+          type: 'click',
+          userAgent: request.headers.get('user-agent'),
+          referrer: request.headers.get('referer'),
+        },
+      })
+      .catch(() => {}),
+  );
+
+  return Response.redirect(target.toString());
 }
