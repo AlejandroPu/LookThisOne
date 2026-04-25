@@ -83,14 +83,19 @@ export async function changeUsername(
         'Username must be 3–30 characters: lowercase letters, numbers, and hyphens only. Cannot start or end with a hyphen.',
     };
 
-  const taken = await prisma.page.findUnique({ where: { username } });
-  if (taken) return { error: 'That username is already taken.' };
-
-  await prisma.page.update({ where: { id: page.id }, data: { username } });
+  try {
+    await prisma.page.update({ where: { id: page.id }, data: { username } });
+  } catch (e: unknown) {
+    if ((e as { code?: string }).code === 'P2002') {
+      return { error: 'That username is already taken.' };
+    }
+    throw e;
+  }
 
   revalidatePath(`/${page.username}`);
   revalidatePath(`/${username}`);
   revalidatePath('/dashboard');
+  revalidatePath('/dashboard/settings');
 
   return { success: `Username changed to "${username}".` };
 }
