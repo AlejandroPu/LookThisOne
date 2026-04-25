@@ -9,6 +9,7 @@ import {
   useTransition,
 } from 'react';
 import type { Link } from '@prisma/client';
+import { useTranslations } from 'next-intl';
 import {
   DndContext,
   KeyboardSensor,
@@ -64,6 +65,7 @@ function optimisticReducer(links: Link[], action: OptimisticAction): Link[] {
 // --- Sub-components ---
 
 function LinkEditForm({ link, onDone }: { link: Link; onDone: () => void }) {
+  const t = useTranslations('Links');
   const updateWithId = updateLink.bind(null, link.id);
   const [state, formAction, pending] = useActionState(updateWithId, null);
 
@@ -84,7 +86,7 @@ function LinkEditForm({ link, onDone }: { link: Link; onDone: () => void }) {
         defaultValue={link.title}
         required
         maxLength={100}
-        placeholder="Title"
+        placeholder={t('editTitlePlaceholder')}
         className="rounded border border-gray-300 px-2 py-1 text-sm"
       />
       <input
@@ -101,14 +103,14 @@ function LinkEditForm({ link, onDone }: { link: Link; onDone: () => void }) {
           disabled={pending}
           className="rounded bg-black px-3 py-1 text-xs font-medium text-white hover:bg-gray-800 disabled:opacity-50"
         >
-          {pending ? 'Saving…' : 'Save'}
+          {pending ? t('saving') : t('save')}
         </button>
         <button
           type="button"
           onClick={onDone}
           className="rounded border border-gray-300 px-3 py-1 text-xs font-medium hover:bg-gray-50"
         >
-          Cancel
+          {t('cancel')}
         </button>
       </div>
     </form>
@@ -128,13 +130,15 @@ function LinkRow({
   onToggle: () => void;
   onDelete: () => void;
 }) {
+  const t = useTranslations('Links');
+
   return (
     <div className="flex items-start gap-3">
       {dragHandle}
       <button
         type="button"
         onClick={onToggle}
-        aria-label={link.enabled ? 'Disable link' : 'Enable link'}
+        aria-label={link.enabled ? t('disableLink') : t('enableLink')}
         className={`mt-0.5 h-4 w-4 shrink-0 rounded border ${
           link.enabled ? 'border-black bg-black' : 'border-gray-300 bg-white'
         }`}
@@ -153,14 +157,14 @@ function LinkRow({
           onClick={onEdit}
           className="text-xs text-gray-500 hover:text-black"
         >
-          Edit
+          {t('edit')}
         </button>
         <button
           type="button"
           onClick={onDelete}
           className="text-xs text-red-500 hover:text-red-700"
         >
-          Delete
+          {t('delete')}
         </button>
       </div>
     </div>
@@ -182,6 +186,7 @@ function SortableLinkItem({
   onToggle: () => void;
   onDelete: () => void;
 }) {
+  const t = useTranslations('Links');
   const {
     attributes,
     listeners,
@@ -200,7 +205,7 @@ function SortableLinkItem({
   const dragHandle = (
     <button
       type="button"
-      aria-label={`Reorder ${link.title}`}
+      aria-label={t('reorderAriaLabel', { title: link.title })}
       className="mt-0.5 shrink-0 cursor-grab touch-none text-gray-400 hover:text-gray-700 active:cursor-grabbing disabled:cursor-not-allowed disabled:opacity-30"
       disabled={isEditing}
       {...attributes}
@@ -244,6 +249,7 @@ function SortableLinkItem({
 // --- Main component ---
 
 export function LinksEditor({ links: initialLinks }: { links: Link[] }) {
+  const t = useTranslations('Links');
   const [optimisticLinks, dispatchOptimistic] = useOptimistic(
     initialLinks,
     optimisticReducer,
@@ -309,10 +315,10 @@ export function LinksEditor({ links: initialLinks }: { links: Link[] }) {
 
   return (
     <section className="mt-8 space-y-6 rounded border border-gray-200 p-6">
-      <h2 className="text-sm font-medium text-gray-500">Links</h2>
+      <h2 className="text-sm font-medium text-gray-500">{t('heading')}</h2>
 
       {optimisticLinks.length === 0 ? (
-        <p className="text-sm text-gray-400">No links yet. Add one below.</p>
+        <p className="text-sm text-gray-400">{t('empty')}</p>
       ) : (
         <DndContext
           id="links-dnd"
@@ -342,7 +348,9 @@ export function LinksEditor({ links: initialLinks }: { links: Link[] }) {
       )}
 
       <div className="border-t border-gray-100 pt-4">
-        <p className="mb-3 text-xs font-medium text-gray-500">Add a link</p>
+        <p className="mb-3 text-xs font-medium text-gray-500">
+          {t('addHeading')}
+        </p>
         <form
           ref={formRef}
           action={createAction}
@@ -358,7 +366,7 @@ export function LinksEditor({ links: initialLinks }: { links: Link[] }) {
             name="title"
             required
             maxLength={100}
-            placeholder="Title (e.g. My Portfolio)"
+            placeholder={t('titlePlaceholder')}
             className="rounded border border-gray-300 px-3 py-2 text-sm"
           />
           <input
@@ -373,7 +381,7 @@ export function LinksEditor({ links: initialLinks }: { links: Link[] }) {
             disabled={createPending}
             className="self-start rounded bg-black px-3 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
           >
-            {createPending ? 'Adding…' : 'Add link'}
+            {createPending ? t('adding') : t('addLink')}
           </button>
         </form>
       </div>

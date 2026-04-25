@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import { readConsent, setConsent } from '@/lib/consent/cookie.client';
 
@@ -17,6 +18,7 @@ const PRIVATE_PREFIXES = [
 
 export function ConsentBanner() {
   const pathname = usePathname();
+  const t = useTranslations('Consent');
   const [visible, setVisible] = useState(() => {
     if (typeof document === 'undefined') return false;
     return readConsent() === null;
@@ -39,15 +41,14 @@ export function ConsentBanner() {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Cookie consent"
+      aria-label={t('ariaLabel')}
       className="fixed inset-x-0 bottom-0 z-50 border-t border-gray-200 bg-white shadow-md"
     >
       <div className="mx-auto flex max-w-3xl flex-col gap-4 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-gray-700">
-          We use cookies to measure anonymous page views. You can accept or
-          reject — your choice is remembered for 12 months.{' '}
+          {t('message')}{' '}
           <Link href="/privacy" className="underline hover:text-gray-900">
-            Privacy policy
+            {t('privacyPolicy')}
           </Link>
           .
         </p>
@@ -57,13 +58,13 @@ export function ConsentBanner() {
             onClick={() => handleChoice('denied')}
             className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            Reject
+            {t('reject')}
           </button>
           <button
             onClick={() => handleChoice('granted')}
             className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            Accept
+            {t('accept')}
           </button>
         </div>
       </div>

@@ -1,4 +1,7 @@
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
+
+import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 
 const features = [
   {
@@ -23,33 +26,37 @@ const features = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const tNav = await getTranslations('Nav');
+  const tHome = await getTranslations('Home');
+
   return (
     <div className="flex flex-1 flex-col">
       <header className="border-b border-black/5 dark:border-white/10">
         <nav
           className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5"
-          aria-label="Principal"
+          aria-label={tNav('ariaLabel')}
         >
           <Link
             href="/"
             className="text-lg font-semibold tracking-tight"
-            aria-label="LookThisOne — inicio"
+            aria-label={tNav('homeAriaLabel')}
           >
             LookThisOne
           </Link>
           <div className="flex items-center gap-3 text-sm">
+            <LocaleSwitcher />
             <Link
               href="#features"
               className="hidden text-zinc-600 hover:text-zinc-900 sm:inline dark:text-zinc-400 dark:hover:text-zinc-100"
             >
-              Características
+              {tNav('features')}
             </Link>
             <Link
               href="/dashboard"
               className="rounded-full bg-zinc-900 px-4 py-2 font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
             >
-              Empezar
+              {tNav('getStarted')}
             </Link>
           </div>
         </nav>
@@ -78,13 +85,13 @@ export default function Home() {
                 href="/dashboard"
                 className="inline-flex h-12 items-center justify-center rounded-full bg-zinc-900 px-6 text-base font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
               >
-                Empezar
+                {tNav('getStarted')}
               </Link>
               <Link
                 href="#features"
                 className="inline-flex h-12 items-center justify-center rounded-full border border-black/10 px-6 text-base font-medium transition-colors hover:bg-black/[0.04] dark:border-white/15 dark:hover:bg-white/[0.06]"
               >
-                Saber más
+                {tHome('learnMore')}
               </Link>
             </div>
           </div>
@@ -140,7 +147,7 @@ export default function Home() {
               href="/dashboard"
               className="inline-flex h-12 items-center justify-center rounded-full bg-zinc-900 px-6 text-base font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
             >
-              Empezar
+              {tNav('getStarted')}
             </Link>
           </div>
         </section>
@@ -148,10 +155,7 @@ export default function Home() {
 
       <footer className="border-t border-black/5 dark:border-white/10">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-3 px-6 py-8 text-sm text-zinc-500 sm:flex-row dark:text-zinc-500">
-          <p>
-            © {new Date().getFullYear()} LookThisOne. Todos los derechos
-            reservados.
-          </p>
+          <p>{tHome('copyright', { year: new Date().getFullYear() })}</p>
           <a
             href="https://github.com/AlejandroPu/LookThisOne"
             target="_blank"

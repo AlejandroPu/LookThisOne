@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 
 import { requirePage } from '@/lib/auth/dal';
 import { prisma } from '@/lib/prisma';
@@ -15,6 +16,7 @@ export const metadata = {
 export default async function DashboardPage() {
   const { user, page } = await requirePage();
   const publicPath = `/${page.username}`;
+  const t = await getTranslations('Dashboard');
 
   const builtInThemes = await prisma.theme.findMany({
     where: { isBuiltIn: true },
@@ -32,9 +34,9 @@ export default async function DashboardPage() {
     <main className="mx-auto max-w-2xl px-6 py-12">
       <header className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold">Dashboard</h1>
+          <h1 className="text-2xl font-semibold">{t('title')}</h1>
           <p className="text-sm text-gray-600">
-            Signed in as <span className="font-mono">{user.email}</span>
+            {t('signedInAs')} <span className="font-mono">{user.email}</span>
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -42,14 +44,14 @@ export default async function DashboardPage() {
             href="/dashboard/settings"
             className="rounded border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50"
           >
-            Settings
+            {t('settings')}
           </Link>
           <form action="/auth/signout" method="post">
             <button
               type="submit"
               className="rounded border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50"
             >
-              Sign out
+              {t('signOut')}
             </button>
           </form>
         </div>
@@ -58,7 +60,9 @@ export default async function DashboardPage() {
       <section className="mt-8 space-y-4 rounded border border-gray-200 p-6">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h2 className="text-sm font-medium text-gray-500">Your page</h2>
+            <h2 className="text-sm font-medium text-gray-500">
+              {t('yourPage')}
+            </h2>
             <p className="mt-1 font-mono text-lg">lookthis.one{publicPath}</p>
           </div>
           <span
@@ -68,7 +72,7 @@ export default async function DashboardPage() {
                 : 'rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700'
             }
           >
-            {page.published ? 'Published' : 'Draft'}
+            {page.published ? t('published') : t('draft')}
           </span>
         </div>
 
@@ -78,7 +82,7 @@ export default async function DashboardPage() {
               type="submit"
               className="rounded bg-black px-3 py-2 text-sm font-medium text-white hover:bg-gray-800"
             >
-              {page.published ? 'Unpublish' : 'Publish'}
+              {page.published ? t('unpublish') : t('publish')}
             </button>
           </form>
 
@@ -89,12 +93,10 @@ export default async function DashboardPage() {
               rel="noopener noreferrer"
               className="rounded border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50"
             >
-              View public page ↗
+              {t('viewPublicPage')}
             </Link>
           ) : (
-            <span className="text-xs text-gray-500">
-              Publish to make your page reachable at the URL above.
-            </span>
+            <span className="text-xs text-gray-500">{t('publishHint')}</span>
           )}
         </div>
       </section>
