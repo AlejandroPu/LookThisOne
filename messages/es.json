@@ -3,7 +3,8 @@
     "ariaLabel": "Principal",
     "homeAriaLabel": "LookThisOne — inicio",
     "features": "Características",
-    "getStarted": "Empezar"
+    "getStarted": "Empezar",
+    "goToDashboard": "Ir al panel"
   },
   "Home": {
     "learnMore": "Saber más",

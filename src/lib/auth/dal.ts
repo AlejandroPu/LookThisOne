@@ -26,6 +26,15 @@ import { createClient } from '@/lib/supabase/server';
 // (sections "Creating a Data Access Layer (DAL)" and "Layouts and auth
 // checks").
 
+// Returns the current user without redirecting — safe to call on public pages.
+export const peekUser = cache(async (): Promise<User | null> => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user;
+});
+
 export const verifySession = cache(async (): Promise<User> => {
   const supabase = await createClient();
   const {

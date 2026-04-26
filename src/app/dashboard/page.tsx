@@ -4,6 +4,8 @@ import { getTranslations } from 'next-intl/server';
 import { requirePage } from '@/lib/auth/dal';
 import { prisma } from '@/lib/prisma';
 
+import { LocaleSwitcher } from '@/components/LocaleSwitcher';
+
 import { togglePublish } from './actions';
 import { LinksEditor } from './LinksEditor';
 import { ProfileEditor } from './ProfileEditor';
@@ -40,6 +42,7 @@ export default async function DashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <LocaleSwitcher />
           <Link
             href="/dashboard/settings"
             className="rounded border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50"

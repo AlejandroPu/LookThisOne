@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 
+import { peekUser } from '@/lib/auth/dal';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 
 const features = [
@@ -27,8 +28,12 @@ const features = [
 ];
 
 export default async function Home() {
-  const tNav = await getTranslations('Nav');
-  const tHome = await getTranslations('Home');
+  const [tNav, tHome, user] = await Promise.all([
+    getTranslations('Nav'),
+    getTranslations('Home'),
+    peekUser(),
+  ]);
+  const isLoggedIn = !!user;
 
   return (
     <div className="flex flex-1 flex-col">
@@ -56,7 +61,7 @@ export default async function Home() {
               href="/dashboard"
               className="rounded-full bg-zinc-900 px-4 py-2 font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
             >
-              {tNav('getStarted')}
+              {isLoggedIn ? tNav('goToDashboard') : tNav('getStarted')}
             </Link>
           </div>
         </nav>
@@ -85,7 +90,7 @@ export default async function Home() {
                 href="/dashboard"
                 className="inline-flex h-12 items-center justify-center rounded-full bg-zinc-900 px-6 text-base font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
               >
-                {tNav('getStarted')}
+                {isLoggedIn ? tNav('goToDashboard') : tNav('getStarted')}
               </Link>
               <Link
                 href="#features"
@@ -147,7 +152,7 @@ export default async function Home() {
               href="/dashboard"
               className="inline-flex h-12 items-center justify-center rounded-full bg-zinc-900 px-6 text-base font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
             >
-              {tNav('getStarted')}
+              {isLoggedIn ? tNav('goToDashboard') : tNav('getStarted')}
             </Link>
           </div>
         </section>
