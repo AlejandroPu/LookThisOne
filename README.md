@@ -168,8 +168,10 @@ See [`CLAUDE.md`](./CLAUDE.md) for the full contributor guide (also read by AI a
 - [x] Account settings: change username, email, password, delete account
 - [x] Cookie consent banner (GDPR)
 - [x] Internationalisation: EN / ES
-- [ ] Analytics dashboard (view your stats)
+- [ ] UI & copy polish (small fixes across flows)
 - [ ] Visual redesign with Claude Design
+- [ ] Loading and error states audit
+- [ ] Wrap up v1 — begin v2 in a private repo
 
 ---
 
